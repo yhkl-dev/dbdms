@@ -9,6 +9,7 @@ require (
 	github.com/BurntSushi/xgb v0.0.0-20200324125942-20f126ea2843 // indirect
 	github.com/cncf/udpa/go v0.0.0-20200508205342-3b31d022a144 // indirect
 	github.com/creack/pty v1.1.11 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/envoyproxy/go-control-plane v0.9.5 // indirect
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200420212212-258d9bec320e // indirect
@@ -36,7 +37,7 @@ require (
 	golang.org/x/tools v0.0.0-20200604183345-4d5ea46c79fe // indirect
 	google.golang.org/genproto v0.0.0-20200605102947-12044bf5ea91 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
-	gopkg.in/yaml.v2 v2.3.0 // indirect
+	gopkg.in/yaml.v2 v2.3.0
 	gopkg.in/yaml.v3 v3.0.0-20200603094226-e3079894b1e8 // indirect
 	rsc.io/sampler v1.99.99 // indirect
 )
