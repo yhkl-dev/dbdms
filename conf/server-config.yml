@@ -1,0 +1,13 @@
+server:
+  addr: 0.0.0.0:8080
+  read-timeout: 60
+  write-timeout: 60
+  idle-timeout: 300
+  max-header-bytes: 10485760
+
+gin:
+  # "debug", "release", "test"
+  run-mode: debug
+  handle-method-not-allowed: true
+  max-multipart-memory: 10485760
+
