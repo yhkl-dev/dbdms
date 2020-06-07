@@ -28,7 +28,7 @@ type ginConfig struct {
 }
 
 type serverConfig struct {
-	Addr           string        `yaml: "addr"`
+	Addr           string        `yaml:"addr"`
 	ReadTimeout    time.Duration `yaml:"read-timeout"`
 	WriteTimeout   time.Duration `yaml:"write-timeout"`
 	IdleTimeout    time.Duration `yaml:"idle-timeout"`
@@ -67,7 +67,7 @@ func GetDatasource() (ds *datasource) {
 
 // LoadServerConfig load server config
 func LoadServerConfig(path string) error {
-	data, err := ioutil.ReadFile(paht)
+	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err
 	}
@@ -75,12 +75,17 @@ func LoadServerConfig(path string) error {
 	if err != nil {
 		return err
 	}
-	return error
+	return err
 }
 
 // GetServerConfig get server config
 func GetServerConfig() (serverconfig *serverConfig) {
 	return configuration.Server
+}
+
+// GetGinConfig get gin config
+func GetGinConfig() (ginconfig *ginConfig) {
+	return configuration.Gin
 }
 
 // LoadTokenConfig load token config
@@ -93,7 +98,7 @@ func LoadTokenConfig(path string) error {
 	if err != nil {
 		return err
 	}
-	return error
+	return err
 }
 
 // GetTokenConfig get token config
@@ -111,7 +116,7 @@ func LoadConfig(path string) error {
 	if err != nil {
 		return err
 	}
-	return error
+	return err
 }
 
 // GetConfig return config
