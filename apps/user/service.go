@@ -7,6 +7,10 @@ import (
 
 type UserService interface {
 	GetAll() []*User
+	GetUserByName(username string) *User
+	GetUserByPhone(phone string) *User
+	GetByID(id int) *User
+	SaveOrUpdate(user *User) error
 }
 
 var userServiceIns = &userService{}
@@ -26,7 +30,7 @@ func (us *userService) GetAll() []*User {
 	return users
 }
 func (us *userService) GetUserByName(username string) *User {
-	user := us.repo.FindOne("user_name = ?", username)
+	user := us.repo.FindSingle("user_name = ?", username)
 	if user != nil {
 		return user.(*User)
 	}
@@ -41,7 +45,7 @@ func (us *userService) GetUserByPhone(phone string) *User {
 	return nil
 }
 
-func (us *userService) GetByID(id int) []*User {
+func (us *userService) GetByID(id int) *User {
 	if id <= 0 {
 		return nil
 	}

@@ -36,6 +36,8 @@ func main() {
 	router.Static("/page", "view")
 	router.MaxMultipartMemory = ginConfig.MaxMultipartMememory
 	routers.RegisterApiRoutes(router)
+	routers.RegisterOpenRoutes(router)
+	routers.RegisterAppRoutes(router)
 	serverConfig := system.GetServerConfig()
 	server := &http.Server{
 		Addr:           serverConfig.Addr,

@@ -41,7 +41,7 @@ func (r *userRepository) Delete(user interface{}) error {
 func (r *userRepository) FindSingle(condition string, params ...interface{}) interface{} {
 	var user User
 	r.db.Where(condition, params).First(&user)
-	if user.UserName != nil {
+	if user.UserName != "" {
 		return &user
 	}
 	return nil

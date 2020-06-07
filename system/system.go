@@ -15,10 +15,10 @@ type config struct {
 }
 
 type tokenConfig struct {
-	Issuer     string `yaml:"issuer"`
-	SignKey    string `yaml:"sign-key"`
-	ActiveTime string `yaml:"active-time"`
-	ExpireTime int64  `yaml:"expired-time"`
+	Issuer      string `yaml:"issuer"`
+	SignKey     string `yaml:"sign-key"`
+	ActiveTime  int64  `yaml:"active-time"`
+	ExpiredTime int64  `yaml:"expired-time"`
 }
 
 type ginConfig struct {

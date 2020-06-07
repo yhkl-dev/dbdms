@@ -19,6 +19,8 @@ var statusText = map[int]string{
 	BindModelError:      "Model EnClosure Exception",
 	NoneParamError:      "No Effective Parameter",
 	LoginStatusOK:       "Login Success",
+	LoginStatusSQLError: "Login Error when update database",
+	LoginStatusError:    "Invalied username or password",
 	SaveObjIsNil:        "Object Saved is nil",
 	UpdateObjIsNil:      "Record does not exist",
 	ExistSameNameError:  "Duplicate name",
