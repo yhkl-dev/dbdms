@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 // SQL sql handler
@@ -23,7 +24,7 @@ func init() {
 		os.Exit(0)
 	}
 	SQL.DB().SetMaxOpenConns(datasource.MaxOpenConns)
-	SQL.DB().SetMaxIdleConns(datasource.SetMaxIdleConns)
+	SQL.DB().SetMaxIdleConns(datasource.MaxIdleConns)
 	SQL.SetLogger(SQLLogger)
 	SQL.LogMode(datasource.ShowSQL)
 	SQL.SingularTable(datasource.SingularTable)

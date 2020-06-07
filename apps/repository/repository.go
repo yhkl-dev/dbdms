@@ -7,5 +7,5 @@ type Repository interface {
 	FindOne(id int) interface{}
 	FindSingle(condition string, params ...interface{}) interface{}
 	FindMore(condition string, params ...interface{}) interface{}
-	FindPage(condition int, pageSize int, andCons map[string]interface{}, orCOns map[string]interface{}) (pageBean *helper.PageBean)
+	//	FindPage(condition int, pageSize int, andCons map[string]interface{}, orCOns map[string]interface{}) (pageBean *helper.PageBean)
 }

@@ -21,8 +21,8 @@ type User struct {
 	Status     int
 	CrudTime
 	LoginTime time.Time `gorm:"default:null"`
-	Role      *Role     `gorm:"foreignkey:RoleId;save_associations:false"`
-	RoleID    *string   `gorm:"type:int" form:"role_id"`
+	//	Role      *Role     `gorm:"foreignkey:RoleId;save_associations:false"`
+	//	RoleID    *string   `gorm:"type:int" form:"role_id"`
 }
 
 func init() {

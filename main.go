@@ -2,6 +2,7 @@ package main
 
 import (
 	helper "dbdms/helpers"
+	"dbdms/routers"
 	system "dbdms/system"
 	"net/http"
 	"os"
@@ -34,6 +35,7 @@ func main() {
 	router.HandleMethodNotAllowed = ginConfig.HandleMethodNotAllowed
 	router.Static("/page", "view")
 	router.MaxMultipartMemory = ginConfig.MaxMultipartMememory
+	routers.RegisterApiRoutes(router)
 	serverConfig := system.GetServerConfig()
 	server := &http.Server{
 		Addr:           serverConfig.Addr,

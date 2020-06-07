@@ -16,8 +16,8 @@ type config struct {
 
 type tokenConfig struct {
 	Issuer     string `yaml:"issuer"`
-	SignKey    string `yaml: "sign-key"`
-	ActiveTime string `yaml: "active-time"`
+	SignKey    string `yaml:"sign-key"`
+	ActiveTime string `yaml:"active-time"`
 	ExpireTime int64  `yaml:"expired-time"`
 }
 
@@ -39,16 +39,17 @@ type datasource struct {
 	Driver        string `yaml:"driver"`
 	URL           string `yaml:"url"`
 	Username      string `yaml:"username"`
-	Password      string `yaml: "password"`
+	Password      string `yaml:"password"`
 	MaxOpenConns  int    `yaml:"max-open-conns"`
+	MaxIdleConns  int    `yaml:"max-idle-conns"`
 	ShowSQL       bool   `yaml:"show-sql"`
 	SingularTable bool   `yaml:"singular-table"`
 }
 
 var configuration *config
 
-// LoadDatasourceCOnfig load config from file path
-func LoadDatasourceCOnfig(path string) error {
+// LoadDatasourceConfig load config from file path
+func LoadDatasourceConfig(path string) error {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err

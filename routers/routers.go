@@ -1,12 +1,20 @@
 package routers
 
 import (
+	"dbdms/apps/user"
 	"dbdms/system"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
+
+func RegisterApiRoutes(router *gin.Engine) {
+	api := router.Group("api")
+	api.Use(system.JWTAuth())
+	api.GET("get_all_users", user.GetAllUsers)
+}
 
 func RegisterOpenRoutes(router *gin.Engine) {
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
