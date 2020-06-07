@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-const Salt string = "*$salt@*"
+const salt string = "*$salt@*"
 
 // MD5 encrypt
 func MD5(text string) string {
@@ -19,7 +19,7 @@ func MD5(text string) string {
 // SHA256 encrypt
 func SHA256(text string) string {
 	hash := sha256.New()
-	text = Salt + text + Salt
+	text = salt + text + salt
 	hash.Write([]byte(text))
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
