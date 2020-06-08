@@ -56,7 +56,7 @@ func (us *userService) GetByID(id int) *User {
 }
 
 func (us *userService) SaveOrUpdate(user *User) error {
-	if user != nil {
+	if user == nil {
 		return errors.New(helper.StatusText(helper.SaveObjIsNil))
 	}
 	userByName := us.GetUserByName(user.UserName)
