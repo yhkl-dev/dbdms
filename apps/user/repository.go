@@ -2,6 +2,7 @@ package user
 
 import (
 	repository "dbdms/apps/repository"
+	helper "dbdms/helpers"
 
 	"github.com/jinzhu/gorm"
 )
@@ -62,4 +63,21 @@ func (r *userRepository) FindMore(condition string, params ...interface{}) inter
 	users := make([]*User, 0)
 	r.db.Where(condition, params).Find(&users)
 	return users
+}
+
+func (r *userRepository) FindPage(page int, pageSize int, andCons map[string]interface{}, orCons map[string]interface{}) (pageBean *helper.PageBean) {
+	total := 0
+	rows := make([]User, 0)
+	if andCons != nil && len(andCons) > 0 {
+		for k, v := range andCons {
+			r.db = r.db.Where(k, v)
+		}
+	}
+	if orCons != nil && len(orCons) > 0 {
+		for k, v := range orCons {
+			r.db = r.db.Where(k, v)
+		}
+	}
+	r.db.Limit(pageSize)
+	return &helper.PageBean{Page: page, PageSize: pageSize, Total: total, Rows: rows}
 }

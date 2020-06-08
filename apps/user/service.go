@@ -3,6 +3,7 @@ package user
 import (
 	helper "dbdms/helpers"
 	"errors"
+	"fmt"
 )
 
 type UserService interface {
@@ -29,6 +30,7 @@ func (us *userService) GetAll() []*User {
 	users := us.repo.FindMore("1=1").([]*User)
 	return users
 }
+
 func (us *userService) GetUserByName(username string) *User {
 	user := us.repo.FindSingle("user_name = ?", username)
 	if user != nil {
@@ -59,6 +61,7 @@ func (us *userService) SaveOrUpdate(user *User) error {
 	}
 	userByName := us.GetUserByName(user.UserName)
 	userByPhone := us.GetUserByPhone(user.Phone)
+	fmt.Println(user.ID)
 	if user.ID == 0 {
 		if userByName != nil && userByName.ID != 0 {
 			return errors.New(helper.StatusText(helper.ExistSameNameError))
@@ -66,20 +69,43 @@ func (us *userService) SaveOrUpdate(user *User) error {
 		if userByPhone != nil && userByPhone.ID != 0 {
 			return errors.New(helper.StatusText(helper.ExistSamePhoneError))
 		}
+		user.Password = helper.SHA256(user.Password)
 		return us.repo.Insert(user)
-	} else {
-		persist := us.GetByID(user.ID)
-		if persist == nil || persist.ID == 0 {
-			return errors.New(helper.StatusText(helper.UpdateObjIsNil))
-		}
-		if userByName != nil && userByName.ID != 0 {
-			return errors.New(helper.StatusText(helper.ExistSameNameError))
-		}
-		if userByPhone != nil && userByPhone.ID != 0 {
-			return errors.New(helper.StatusText(helper.ExistSamePhoneError))
-		}
-		user.Password = persist.Password
-		return us.repo.Update(user)
 	}
-	return nil
+	persist := us.GetByID(user.ID)
+	if persist == nil || persist.ID == 0 {
+		return errors.New(helper.StatusText(helper.UpdateObjIsNil))
+	}
+	if userByName != nil && userByName.ID != 0 {
+		return errors.New(helper.StatusText(helper.ExistSameNameError))
+	}
+	if userByPhone != nil && userByPhone.ID != 0 {
+		return errors.New(helper.StatusText(helper.ExistSamePhoneError))
+	}
+	user.Password = persist.Password
+	return us.repo.Update(user)
+}
+
+func (us *userService) DeleteByID(id int) error {
+	user := us.repo.FindOne(id).(*User)
+	if user == nil || user.ID == 0 {
+		return errors.New(helper.StatusText(helper.DeleteObjIsNil))
+	}
+	err := us.repo.Delete(user)
+	return err
+}
+
+func (us *userService) GetPage(page int, pageSize int, user *User) *helper.PageBean {
+	addCons := make(map[string]interface{})
+	if user != nil && user.UserName != "" {
+		addCons["user_name LIKE ?"] = user.UserName + "?"
+	}
+	if user != nil && user.Phone != "" {
+		addCons["phone LIKE ?"] = user.Phone + "?"
+	}
+	if user != nil && user.Email != "" {
+		addCons["email LIKE ?"] = user.Email + "?"
+	}
+	pageBean := us.repo.FindPage(page, pageSize, addCons, nil)
+	return pageBean
 }

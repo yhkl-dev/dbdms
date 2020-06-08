@@ -18,6 +18,7 @@ func RegisterApiRoutes(router *gin.Engine) {
 
 func RegisterOpenRoutes(router *gin.Engine) {
 	router.POST("login", user.Login)
+	router.POST("enroll", user.Enroll)
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 

@@ -18,7 +18,7 @@ func Login(context *gin.Context) {
 		userService := UserServiceInstance(UserRepositoryInterface(helper.SQL))
 		user := userService.GetUserByName(params.Username)
 		if user != nil && user.Password == helper.SHA256(params.Password) {
-			user.LoginCount += 1
+			user.LoginCount++
 			user.LoginTime = time.Now()
 			err := userService.SaveOrUpdate(user)
 			if err == nil {
@@ -43,6 +43,41 @@ func Login(context *gin.Context) {
 			Content: err,
 		})
 	}
+}
+
+func Enroll(context *gin.Context) {
+	user := &User{}
+	if err := context.Bind(user); err == nil {
+		err = user.Validator()
+		if err != nil {
+			context.JSON(http.StatusOK, &helper.JSONObject{
+				Code:    "0",
+				Message: err.Error(),
+			})
+			return
+		}
+		user.DeleteAt = nil
+		userService := UserServiceInstance(UserRepositoryInterface(helper.SQL))
+		err := userService.SaveOrUpdate(user)
+		if err == nil {
+			context.JSON(http.StatusOK, helper.JSONObject{
+				Code:    "1",
+				Message: helper.StatusText(helper.SaveStatusOK),
+			})
+			return
+		}
+		context.JSON(http.StatusOK, &helper.JSONObject{
+			Code:    "0",
+			Message: err.Error(),
+		})
+		return
+
+	}
+	context.JSON(http.StatusUnprocessableEntity, &helper.JSONObject{
+		Code:    "0",
+		Message: helper.StatusText(helper.BindModelError),
+		Content: err.Error(),
+	})
 }
 
 // generateToken
@@ -86,7 +121,7 @@ func init() {
 	}
 }
 
-// 获取所有用户信息
+// GetAllUsers 获取所有用户信息
 // @Summary 获取所有用户信息
 // @Tags UserController
 // @Accept json
