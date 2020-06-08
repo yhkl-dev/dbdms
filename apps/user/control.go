@@ -72,12 +72,14 @@ func Enroll(context *gin.Context) {
 		})
 		return
 
+	} else {
+		context.JSON(http.StatusUnprocessableEntity, &helper.JSONObject{
+			Code:    "0",
+			Message: helper.StatusText(helper.BindModelError),
+			Content: err.Error(),
+		})
+
 	}
-	context.JSON(http.StatusUnprocessableEntity, &helper.JSONObject{
-		Code:    "0",
-		Message: helper.StatusText(helper.BindModelError),
-		Content: err.Error(),
-	})
 }
 
 // generateToken
