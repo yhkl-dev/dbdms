@@ -7,8 +7,8 @@ import (
 )
 
 type CrudTime struct {
-	CreateAt time.Time
-	UpdateAt time.Time
+	CreateAt *time.Time
+	UpdateAt *time.Time
 	DeleteAt *time.Time `sql:"index"`
 }
 
@@ -30,9 +30,9 @@ func (user *User) Validator() error {
 	if ok, err := regex.MatchLetterNumMinAndMax(user.UserName, 4, 6, "username"); !ok {
 		return err
 	}
-	//	if ok, err := regex.MatchStrongPassword(user.Password, 6, 13); !ok && user.ID == 0 {
-	//		return err
-	//	}
+	if ok, err := regex.MatchStrongPassword(user.Password, 6, 13); !ok && user.ID == 0 {
+		return err
+	}
 	if ok, err := regex.IsPhone(user.Phone); !ok {
 		return err
 	}
