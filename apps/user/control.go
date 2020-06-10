@@ -27,13 +27,13 @@ func Login(context *gin.Context) {
 				context.JSON(http.StatusOK, helper.JSONObject{
 					Code:    "0",
 					Message: helper.StatusText(helper.LoginStatusSQLError),
-					Content: err,
 				})
 			}
 		} else {
 			context.JSON(http.StatusOK, helper.JSONObject{
 				Code:    "0",
 				Message: helper.StatusText(helper.LoginStatusError),
+				content: err,
 			})
 		}
 	} else {
