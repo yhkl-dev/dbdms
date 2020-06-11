@@ -3,6 +3,7 @@ package user
 import (
 	helper "dbdms/helpers"
 	"dbdms/system"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -22,18 +23,20 @@ func Login(context *gin.Context) {
 			user.LoginTime = time.Now()
 			err := userService.SaveOrUpdate(user)
 			if err == nil {
+				fmt.Println("err nil")
 				generateToken(context, user)
 			} else {
 				context.JSON(http.StatusOK, helper.JSONObject{
 					Code:    "0",
 					Message: helper.StatusText(helper.LoginStatusSQLError),
+					Content: err,
 				})
 			}
 		} else {
+			fmt.Println(2)
 			context.JSON(http.StatusOK, helper.JSONObject{
 				Code:    "0",
 				Message: helper.StatusText(helper.LoginStatusError),
-				content: err,
 			})
 		}
 	} else {
@@ -102,14 +105,12 @@ func generateToken(context *gin.Context, user *User) {
 			Message: err.Error(),
 		})
 		context.Abort()
-
 	}
 	context.JSON(http.StatusOK, helper.JSONObject{
 		Code:    "1",
 		Message: helper.StatusText(helper.LoginStatusOK),
 		Content: gin.H{"ACCESS_TOKEN": token, "User": user},
 	})
-
 }
 
 func init() {
