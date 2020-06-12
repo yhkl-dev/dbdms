@@ -14,8 +14,8 @@ type CrudTime struct {
 
 type User struct {
 	ID         int    `gorm:"AUTO_INCREMENT;primary_key"`
-	UserName   string `gorm:"type:varchar(32);unique_index;not null" form:"username" binding:"required"`
-	Password   string `gorm:"type:varchar(64);not null" json:"-" form:"password" binding:"required"`
+	UserName   string `gorm:"type:varchar(32);unique_index;not null" json:"username" form:"username" binding:"required"`
+	Password   string `gorm:"type:varchar(64);not null" json:"password" form:"password" binding:"required"`
 	Phone      string `gorm:"type:varchar(11);unique" form:"phone" binding:"required"`
 	Email      string `gorm:"type:varchar(64)" form:"email"`
 	LoginCount int

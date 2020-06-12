@@ -74,12 +74,15 @@ func (us *userService) SaveOrUpdate(user *User) error {
 	}
 	persist := us.GetByID(user.ID)
 	if persist == nil || persist.ID == 0 {
+		fmt.Println(123)
 		return errors.New(helper.StatusText(helper.UpdateObjIsNil))
 	}
-	if userByName != nil && userByName.ID != 0 {
+	if userByName != nil && userByName.ID != user.ID {
+		fmt.Println(1678)
 		return errors.New(helper.StatusText(helper.ExistSameNameError))
 	}
-	if userByPhone != nil && userByPhone.ID != 0 {
+	if userByPhone != nil && userByPhone.ID != user.ID {
+		fmt.Println(456)
 		return errors.New(helper.StatusText(helper.ExistSamePhoneError))
 	}
 	user.Password = persist.Password

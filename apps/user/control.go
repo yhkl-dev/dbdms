@@ -23,9 +23,9 @@ func Login(context *gin.Context) {
 			user.LoginTime = time.Now()
 			err := userService.SaveOrUpdate(user)
 			if err == nil {
-				fmt.Println("err nil")
 				generateToken(context, user)
 			} else {
+				fmt.Println(111)
 				context.JSON(http.StatusOK, helper.JSONObject{
 					Code:    "0",
 					Message: helper.StatusText(helper.LoginStatusSQLError),
@@ -33,7 +33,6 @@ func Login(context *gin.Context) {
 				})
 			}
 		} else {
-			fmt.Println(2)
 			context.JSON(http.StatusOK, helper.JSONObject{
 				Code:    "0",
 				Message: helper.StatusText(helper.LoginStatusError),

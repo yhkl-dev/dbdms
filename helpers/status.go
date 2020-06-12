@@ -28,7 +28,7 @@ var statusText = map[int]string{
 	NoneParamError:      "No Effective Parameter",
 	LoginStatusOK:       "Login Success",
 	LoginStatusSQLError: "Login Error when update database",
-	LoginStatusError:    "Invalied username or password",
+	LoginStatusError:    "Invalid username or password",
 	SaveObjIsNil:        "Object Saved is nil",
 	UpdateObjIsNil:      "Record does not exist",
 	ExistSameNameError:  "Duplicate name",

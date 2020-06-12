@@ -3,7 +3,7 @@ package helper
 // LoginParams login paramters
 type LoginParams struct {
 	Username string `json:"username" form:"username"`
-	Password string `json:"password" form:"pasword"`
+	Password string `json:"password" form:"password"`
 }
 
 // JSONObject the interface data struct
