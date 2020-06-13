@@ -5,6 +5,7 @@ import (
 	"dbdms/system"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -19,7 +20,6 @@ func Login(context *gin.Context) {
 		userService := UserServiceInstance(UserRepositoryInterface(helper.SQL))
 		user := userService.GetUserByName(params.Username)
 		if user != nil && user.Password == helper.SHA256(params.Password) {
-			user.LoginCount++
 			user.LoginTime = time.Now()
 			err := userService.SaveOrUpdate(user)
 			if err == nil {
@@ -58,7 +58,7 @@ func Enroll(context *gin.Context) {
 			})
 			return
 		}
-		user.DeleteAt = nil
+		user.CreateAt = time.Now()
 		userService := UserServiceInstance(UserRepositoryInterface(helper.SQL))
 		err := userService.SaveOrUpdate(user)
 		if err == nil {
@@ -139,4 +139,59 @@ func GetAllUsers(context *gin.Context) {
 	})
 	return
 
+}
+
+func GetUserProfile(context *gin.Context) {
+	userIDString := context.Param("id")
+	userService := UserServiceInstance(UserRepositoryInterface(helper.SQL))
+	userID, err := strconv.Atoi(userIDString)
+	if err == nil {
+		user := userService.GetByID(userID)
+		if user != nil {
+			context.JSON(http.StatusOK, helper.JSONObject{
+				Code:    "1",
+				Content: user,
+			})
+			return
+		}
+		context.JSON(http.StatusOK, helper.JSONObject{
+			Code:    "0",
+			Message: helper.StatusText(helper.UserDoesNotExist),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, helper.JSONObject{
+		Code:    "0",
+		Message: helper.StatusText(helper.ParamParseError),
+		Content: err.Error(),
+	})
+	return
+}
+
+func DeleteUser(context *gin.Context) {
+	userIDString := context.Param("id")
+	userService := UserServiceInstance(UserRepositoryInterface(helper.SQL))
+	userID, err := strconv.Atoi(userIDString)
+	if err == nil {
+		err := userService.DeleteByID(userID)
+		if err != nil {
+			context.JSON(http.StatusOK, helper.JSONObject{
+				Code:    "0",
+				Message: helper.StatusText(helper.DeleteStatusErr),
+				Content: err.Error(),
+			})
+			return
+		}
+		context.JSON(http.StatusOK, helper.JSONObject{
+			Code:    "1",
+			Message: helper.StatusText(helper.DeleteStatusOK),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, helper.JSONObject{
+		Code:    "0",
+		Message: helper.StatusText(helper.ParamParseError),
+		Content: err,
+	})
+	return
 }

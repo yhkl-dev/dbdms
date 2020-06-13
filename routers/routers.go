@@ -2,6 +2,7 @@ package routers
 
 import (
 	"dbdms/apps/user"
+	v1 "dbdms/routers/api/v1"
 	"dbdms/system"
 	"net/http"
 
@@ -10,26 +11,29 @@ import (
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
-func RegisterApiRoutes(router *gin.Engine) {
+// RegisterAPIRoutes register all api routers
+func RegisterAPIRoutes(router *gin.Engine) {
 	api := router.Group("api")
 	api.Use(system.JWTAuth())
-	api.GET("get_all_users", user.GetAllUsers)
+	{
+		v1.RegisterRouter(api)
+	}
 }
 
+// RegisterOpenRoutes register routes which does not need auth
 func RegisterOpenRoutes(router *gin.Engine) {
 	router.POST("login", user.Login)
 	router.POST("enroll", user.Enroll)
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
-// app 路由注册
+// RegisterAppRoutes app 路由注册
 func RegisterAppRoutes(router *gin.Engine) {
 	app := router.Group("app")
 	// 鉴权
 	app.Use(system.JWTAuth())
 	app.GET("hello", func(context *gin.Context) {
 		context.String(http.StatusOK, "Hello APP")
-
 	})
 
 }

@@ -3,17 +3,21 @@ package helper
 const (
 	BindModelError      = 20200
 	NoneParamError      = 20201
+	ParamParseError     = 20202
 	LoginStatusSQLError = 20319
 	LoginStatusError    = 20300
 	LoginStatusOK       = 20301
+	UserDoesNotExist    = 20302
 	SaveStatusOK        = 20400
 	SaveStatusError     = 20401
 	SaveObjIsNil        = 20402
+	DeleteStatusOK      = 20403
+	DeleteStatusErr     = 20404
+	DeleteObjIsNil      = 20405
 	UpdateObjIsNil      = 20406
 	ExistSameNameError  = 20501
 	ExistSamePhoneError = 20502
 	ExistSameEmailError = 20503
-	DeleteObjIsNil      = 20405
 	MinThanMaxErr       = 20799
 	MaxLessZeroErr      = 20798
 	FixLessZeroErr      = 20797
@@ -26,10 +30,15 @@ const (
 var statusText = map[int]string{
 	BindModelError:      "Model EnClosure Exception",
 	NoneParamError:      "No Effective Parameter",
+	ParamParseError:     "Invalid Argument",
 	LoginStatusOK:       "Login Success",
 	LoginStatusSQLError: "Login Error when update database",
 	LoginStatusError:    "Invalid username or password",
+	UserDoesNotExist:    "User does not exist",
 	SaveObjIsNil:        "Object Saved is nil",
+	SaveStatusOK:        "Save success",
+	DeleteStatusOK:      "Delete success",
+	DeleteStatusErr:     "Delete failed",
 	UpdateObjIsNil:      "Record does not exist",
 	ExistSameNameError:  "Duplicate name",
 	ExistSamePhoneError: "Duplicate phone",

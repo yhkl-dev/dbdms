@@ -10,6 +10,7 @@ type UserService interface {
 	GetUserByName(username string) *User
 	GetUserByPhone(phone string) *User
 	GetByID(id int) *User
+	DeleteByID(id int) error
 	SaveOrUpdate(user *User) error
 }
 
@@ -26,7 +27,7 @@ type userService struct {
 }
 
 func (us *userService) GetAll() []*User {
-	users := us.repo.FindMore("1=1").([]*User)
+	users := us.repo.FindMore("1=1 and is_deleted=0").([]*User)
 	return users
 }
 
@@ -50,8 +51,11 @@ func (us *userService) GetByID(id int) *User {
 	if id <= 0 {
 		return nil
 	}
-	user := us.repo.FindOne(id).(*User)
-	return user
+	user := us.repo.FindOne(id)
+	if user != nil {
+		return user.(*User)
+	}
+	return nil
 }
 
 func (us *userService) SaveOrUpdate(user *User) error {

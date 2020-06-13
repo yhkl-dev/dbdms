@@ -38,7 +38,7 @@ func main() {
 	router.HandleMethodNotAllowed = ginConfig.HandleMethodNotAllowed
 	router.Static("/page", "view")
 	router.MaxMultipartMemory = ginConfig.MaxMultipartMememory
-	routers.RegisterApiRoutes(router)
+	routers.RegisterAPIRoutes(router)
 	routers.RegisterOpenRoutes(router)
 	routers.RegisterAppRoutes(router)
 	serverConfig := system.GetServerConfig()
