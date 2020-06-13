@@ -10,7 +10,18 @@ import (
 )
 
 func SaveOrUpdateRole(context *gin.Context) {
+	roleIDString := context.Param("id")
+	roleID, err := strconv.Atoi(roleIDString)
+	if err != nil {
+		context.JSON(http.StatusOK, helper.JSONObject{
+			Code:    "0",
+			Message: helper.StatusText(helper.ParamParseError),
+			Content: err,
+		})
+		return
+	}
 	var role Role
+	role.ID = roleID
 	if err := context.Bind(&role); err == nil {
 		role.DeleteAt = nil
 		roleService := RoleServiceInstance(RoleRepositoryIntance(helper.SQL))

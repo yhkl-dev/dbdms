@@ -43,9 +43,12 @@ func (rs *roleService) SaveOrUpdate(role *Role) error {
 	if persist == nil || persist.ID == 0 {
 		return errors.New(helper.StatusText(helper.UpdateObjIsNil))
 	}
-	if roleByName != nil || roleByName.ID != role.ID {
+	if roleByName != nil && roleByName.ID != role.ID {
 		return errors.New(helper.StatusText(helper.ExistSameNameError))
 	}
+	role.CreateAt = persist.CreateAt
+	role.UpdateAt = time.Now()
+
 	return rs.repo.Update(role)
 }
 

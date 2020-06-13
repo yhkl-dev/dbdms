@@ -93,8 +93,6 @@ func (us *userService) SaveOrUpdate(user *User) error {
 	} else {
 		user.Password = persist.Password
 	}
-
-	//	user.Password = persist.Password
 	return us.repo.Update(user)
 }
 
@@ -106,7 +104,6 @@ func (us *userService) DeleteByID(id int) error {
 	user.IsDeleted = 1
 	deleteTime := time.Now()
 	user.DeleteAt = &deleteTime
-	//	err := us.repo.Delete(user)
 	return us.repo.Update(user)
 }
 
