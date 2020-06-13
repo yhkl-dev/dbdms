@@ -20,7 +20,8 @@ type User struct {
 	UpdateAt  time.Time   `gorm:"column:update_at;default:current_timestamp ON update current_timestamp"`
 	DeleteAt  *time.Time  `gorm:"column:delete_at"`
 	LoginTime *time.Time  `gorm:"column:login_time"`
-	Roles     []role.Role `gorm:"many2many:user_role_mapping" json:"roles" form:"roles"`
+	RoleList  []int       `gorm:"-" json:"roles" form:"roles"`
+	Roles     []role.Role `gorm:"many2many:user_role_mapping"  `
 }
 
 // Validator user column validator

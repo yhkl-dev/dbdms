@@ -82,7 +82,8 @@ func (rs *roleService) DeleteByID(id int) error {
 	deleteTime := time.Now()
 	role.DeleteAt = &deleteTime
 	//	err := us.repo.Delete(user)
-	return rs.repo.Update(role)
+
+	return rs.repo.Delete(role)
 
 }
 

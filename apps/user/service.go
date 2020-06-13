@@ -1,6 +1,7 @@
 package user
 
 import (
+	"dbdms/apps/role"
 	helper "dbdms/helpers"
 	"errors"
 	"time"
@@ -73,6 +74,14 @@ func (us *userService) SaveOrUpdate(user *User) error {
 		if userByPhone != nil && userByPhone.ID != 0 {
 			return errors.New(helper.StatusText(helper.ExistSamePhoneError))
 		}
+		var roles []role.Role
+		roleService := role.RoleServiceInstance(role.RoleRepositoryIntance(helper.SQL))
+
+		for _, roleID := range user.RoleList {
+			roles = append(roles, *roleService.GetByID(roleID))
+		}
+		user.Roles = roles
+
 		user.Password = helper.SHA256(user.Password)
 		return us.repo.Insert(user)
 	}
@@ -92,6 +101,18 @@ func (us *userService) SaveOrUpdate(user *User) error {
 		user.Password = helper.SHA256(user.Password)
 	} else {
 		user.Password = persist.Password
+	}
+
+	if len(user.RoleList) == 0 {
+		user.Roles = persist.Roles
+	} else {
+		var roles []role.Role
+		roleService := role.RoleServiceInstance(role.RoleRepositoryIntance(helper.SQL))
+
+		for _, roleID := range user.RoleList {
+			roles = append(roles, *roleService.GetByID(roleID))
+		}
+		user.Roles = roles
 	}
 	return us.repo.Update(user)
 }

@@ -89,3 +89,32 @@ func GetRoleDetail(context *gin.Context) {
 	})
 	return
 }
+
+func DeleteRole(context *gin.Context) {
+	roleIDString := context.Param("id")
+	roleService := RoleServiceInstance(RoleRepositoryIntance(helper.SQL))
+	roleID, err := strconv.Atoi(roleIDString)
+	if err == nil {
+		role := roleService.DeleteByID(roleID)
+		if role != nil {
+			context.JSON(http.StatusOK, helper.JSONObject{
+				Code:    "1",
+				Content: role,
+			})
+			return
+
+		}
+		context.JSON(http.StatusOK, helper.JSONObject{
+			Code:    "0",
+			Message: helper.StatusText(helper.ResourceDoesNotExist),
+		})
+		return
+
+	}
+	context.JSON(http.StatusOK, helper.JSONObject{
+		Code:    "0",
+		Message: helper.StatusText(helper.ParamParseError),
+		Content: err.Error(),
+	})
+	return
+}

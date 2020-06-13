@@ -3,6 +3,8 @@ package role
 import (
 	repository "dbdms/apps/repository"
 	helper "dbdms/helpers"
+	"fmt"
+	"os/user"
 
 	"github.com/jinzhu/gorm"
 )
@@ -35,7 +37,14 @@ func (r *roleRepository) Update(role interface{}) error {
 }
 
 func (r *roleRepository) Delete(role interface{}) error {
-	err := r.db.Delete(role).Error
+	fmt.Println(role)
+	var user user.User
+	err := r.db.Model(&user).Delete(&role).Error
+	if err != nil {
+		fmt.Println(1111111111111111)
+		return err
+	}
+	err = r.db.Save(role).Error
 	return err
 }
 
