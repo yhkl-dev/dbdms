@@ -1,6 +1,7 @@
 package user
 
 import (
+	"dbdms/apps/role"
 	helper "dbdms/helpers"
 	regex "dbdms/helpers/regex"
 	"time"
@@ -21,6 +22,7 @@ type User struct {
 	LoginTime *time.Time `gorm:"column:login_time"`
 	//	Role      *Role     `gorm:"foreignkey:RoleId;save_associations:false"`
 	//	RoleID    *string   `gorm:"type:int" form:"role_id"`
+	Roles []role.Role `gorm:"many2many:user_role_mapping"`
 }
 
 // Validator user column validator
@@ -42,5 +44,4 @@ func (user *User) Validator() error {
 
 func init() {
 	helper.SQL.AutoMigrate(&User{})
-	helper.SQL.Model(&User{}).AddForeignKey("role_id", "role(id)", "no action", "no action")
 }
