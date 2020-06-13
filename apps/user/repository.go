@@ -78,6 +78,6 @@ func (r *userRepository) FindPage(page int, pageSize int, andCons map[string]int
 			r.db = r.db.Where(k, v)
 		}
 	}
-	r.db.Limit(pageSize)
+	r.db.Limit(pageSize).Offset((page - 1) * pageSize).Order("login_time desc").Find(&rows).Count(&total)
 	return &helper.PageBean{Page: page, PageSize: pageSize, Total: total, Rows: rows}
 }

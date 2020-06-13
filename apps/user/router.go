@@ -7,5 +7,5 @@ func RegisterRouter(router *gin.RouterGroup) {
 	router.GET("", GetAllUsers)
 	router.GET("/:id", GetUserProfile)
 	router.DELETE("/:id", DeleteUser)
-	//	router.PUT("/:id", UpdateUserProfile)
+	router.PUT("/:id", UpdateUserProfile)
 }

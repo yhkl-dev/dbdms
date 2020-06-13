@@ -23,7 +23,7 @@ func RegisterAPIRoutes(router *gin.Engine) {
 // RegisterOpenRoutes register routes which does not need auth
 func RegisterOpenRoutes(router *gin.Engine) {
 	router.POST("login", user.Login)
-	router.POST("enroll", user.Enroll)
+	router.POST("register", user.Register)
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 

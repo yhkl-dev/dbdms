@@ -3,6 +3,7 @@ package user
 import (
 	helper "dbdms/helpers"
 	"errors"
+	"time"
 )
 
 type UserService interface {
@@ -10,13 +11,14 @@ type UserService interface {
 	GetUserByName(username string) *User
 	GetUserByPhone(phone string) *User
 	GetByID(id int) *User
+	GetPage(page int, pageSize int, user *User) *helper.PageBean
 	DeleteByID(id int) error
 	SaveOrUpdate(user *User) error
 }
 
 var userServiceIns = &userService{}
 
-// 获取 userService 实例
+// UserServiceInstance 获取 userService 实例
 func UserServiceInstance(repo UserRepository) UserService {
 	userServiceIns.repo = repo
 	return userServiceIns
@@ -32,7 +34,7 @@ func (us *userService) GetAll() []*User {
 }
 
 func (us *userService) GetUserByName(username string) *User {
-	user := us.repo.FindSingle("user_name = ?", username)
+	user := us.repo.FindSingle("user_name = ? and is_deleted=0", username)
 	if user != nil {
 		return user.(*User)
 	}
@@ -40,7 +42,7 @@ func (us *userService) GetUserByName(username string) *User {
 }
 
 func (us *userService) GetUserByPhone(phone string) *User {
-	user := us.repo.FindSingle("phone = ?", phone)
+	user := us.repo.FindSingle("phone = ? and is_deleted=0", phone)
 	if user != nil {
 		return user.(*User)
 	}
@@ -84,7 +86,15 @@ func (us *userService) SaveOrUpdate(user *User) error {
 	if userByPhone != nil && userByPhone.ID != user.ID {
 		return errors.New(helper.StatusText(helper.ExistSamePhoneError))
 	}
-	user.Password = persist.Password
+	user.CreateAt = persist.CreateAt
+	user.UpdateAt = time.Now()
+	if persist.Password != helper.SHA256(user.Password) {
+		user.Password = helper.SHA256(user.Password)
+	} else {
+		user.Password = persist.Password
+	}
+
+	//	user.Password = persist.Password
 	return us.repo.Update(user)
 }
 
@@ -93,20 +103,30 @@ func (us *userService) DeleteByID(id int) error {
 	if user == nil || user.ID == 0 {
 		return errors.New(helper.StatusText(helper.DeleteObjIsNil))
 	}
-	err := us.repo.Delete(user)
-	return err
+	user.IsDeleted = 1
+	deleteTime := time.Now()
+	user.DeleteAt = &deleteTime
+	//	err := us.repo.Delete(user)
+	return us.repo.Update(user)
 }
 
 func (us *userService) GetPage(page int, pageSize int, user *User) *helper.PageBean {
+	if page == 0 {
+		page = 1
+	}
+	if pageSize == 0 {
+		pageSize = 10
+	}
 	addCons := make(map[string]interface{})
+	addCons["is_deleted = ?"] = "0"
 	if user != nil && user.UserName != "" {
-		addCons["user_name LIKE ?"] = user.UserName + "?"
+		addCons["user_name LIKE ?"] = "%" + user.UserName + "%"
 	}
 	if user != nil && user.Phone != "" {
-		addCons["phone LIKE ?"] = user.Phone + "?"
+		addCons["phone LIKE ?"] = user.Phone + "%"
 	}
 	if user != nil && user.Email != "" {
-		addCons["email LIKE ?"] = user.Email + "?"
+		addCons["email LIKE ?"] = user.Email + "%"
 	}
 	pageBean := us.repo.FindPage(page, pageSize, addCons, nil)
 	return pageBean

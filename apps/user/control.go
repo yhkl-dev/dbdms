@@ -3,7 +3,6 @@ package user
 import (
 	helper "dbdms/helpers"
 	"dbdms/system"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -20,12 +19,12 @@ func Login(context *gin.Context) {
 		userService := UserServiceInstance(UserRepositoryInterface(helper.SQL))
 		user := userService.GetUserByName(params.Username)
 		if user != nil && user.Password == helper.SHA256(params.Password) {
-			user.LoginTime = time.Now()
+			currentTime := time.Now()
+			user.LoginTime = &currentTime
 			err := userService.SaveOrUpdate(user)
 			if err == nil {
 				generateToken(context, user)
 			} else {
-				fmt.Println(111)
 				context.JSON(http.StatusOK, helper.JSONObject{
 					Code:    "0",
 					Message: helper.StatusText(helper.LoginStatusSQLError),
@@ -47,7 +46,7 @@ func Login(context *gin.Context) {
 	}
 }
 
-func Enroll(context *gin.Context) {
+func Register(context *gin.Context) {
 	user := &User{}
 	if err := context.Bind(user); err == nil {
 		err = user.Validator()
@@ -59,6 +58,8 @@ func Enroll(context *gin.Context) {
 			return
 		}
 		user.CreateAt = time.Now()
+		user.DeleteAt = nil
+		user.LoginTime = nil
 		userService := UserServiceInstance(UserRepositoryInterface(helper.SQL))
 		err := userService.SaveOrUpdate(user)
 		if err == nil {
@@ -129,16 +130,19 @@ func init() {
 // @Accept json
 // @Produce json
 // @Success 200 {object} helpers.JsonObject
-// @Router /api/get_all_users [get]
+// @Router /api/v1/user [get]
 func GetAllUsers(context *gin.Context) {
+	page, _ := strconv.Atoi(context.Query("page"))
+	pageSize, _ := strconv.Atoi(context.Query("page_size"))
+	username := context.Query("username")
+	phone := context.Query("phone")
+	email := context.Query("email")
 	userService := UserServiceInstance(UserRepositoryInterface(helper.SQL))
-	users := userService.GetAll()
+	pageBean := userService.GetPage(page, pageSize, &User{UserName: username, Phone: phone, Email: email})
 	context.JSON(http.StatusOK, helper.JSONObject{
 		Code:    "1",
-		Content: users,
+		Content: pageBean,
 	})
-	return
-
 }
 
 func GetUserProfile(context *gin.Context) {
@@ -194,4 +198,50 @@ func DeleteUser(context *gin.Context) {
 		Content: err,
 	})
 	return
+}
+
+func UpdateUserProfile(context *gin.Context) {
+	userIDString := context.Param("id")
+	userID, err := strconv.Atoi(userIDString)
+	if err != nil {
+		context.JSON(http.StatusOK, helper.JSONObject{
+			Code:    "0",
+			Message: helper.StatusText(helper.ParamParseError),
+			Content: err,
+		})
+		return
+	}
+	user := &User{}
+	user.ID = userID
+	if err := context.Bind(user); err == nil {
+		err = user.Validator()
+		if err != nil {
+			context.JSON(http.StatusOK, &helper.JSONObject{
+				Code:    "0",
+				Message: err.Error(),
+			})
+			return
+		}
+		userService := UserServiceInstance(UserRepositoryInterface(helper.SQL))
+		err := userService.SaveOrUpdate(user)
+		if err == nil {
+			context.JSON(http.StatusOK, helper.JSONObject{
+				Code:    "1",
+				Message: helper.StatusText(helper.SaveStatusOK),
+			})
+			return
+		} else {
+			context.JSON(http.StatusOK, &helper.JSONObject{
+				Code:    "0",
+				Message: err.Error(),
+			})
+			return
+		}
+	} else {
+		context.JSON(http.StatusUnprocessableEntity, helper.JSONObject{
+			Code:    "0",
+			Message: helper.StatusText(helper.BindModelError),
+			Content: err.Error(),
+		})
+	}
 }
