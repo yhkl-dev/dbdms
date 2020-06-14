@@ -57,10 +57,8 @@ func (rs *roleService) GetByID(id int) *Role {
 		return nil
 	}
 	role := rs.repo.FindOne(id)
-	fmt.Println(1111111111)
 	if role != nil {
 		fmt.Println(1111111112)
-		return role.(*Role)
 	}
 	return nil
 }
@@ -74,17 +72,22 @@ func (rs *roleService) GetByRoleName(rolename string) *Role {
 }
 
 func (rs *roleService) DeleteByID(id int) error {
-	role := rs.repo.FindOne(id).(*Role)
-	if role == nil || role.ID == 0 {
+	roleS := rs.repo.FindOne(id)
+	if roleS == nil {
+		return errors.New(helper.StatusText(helper.DeleteStatusErr))
+	}
+	role := roleS.(*Role)
+	if role.ID == 0 {
 		return errors.New(helper.StatusText(helper.DeleteStatusErr))
 	}
 	role.IsDeleted = 1
 	deleteTime := time.Now()
 	role.DeleteAt = &deleteTime
-	//	err := us.repo.Delete(user)
-
-	return rs.repo.Delete(role)
-
+	err := rs.repo.Delete(role)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (rs *roleService) GetPage(page int, pageSize int, role *Role) *helper.PageBean {

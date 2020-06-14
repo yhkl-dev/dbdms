@@ -7,6 +7,6 @@ func RegisterRouter(router *gin.RouterGroup) {
 	router.GET("", GetAllRoles)
 	router.GET("/:id", GetRoleDetail)
 	router.PUT("/:id", SaveOrUpdateRole)
-	router.POST("", SaveOrUpdateRole)
+	router.POST("", SaveRole)
 	router.DELETE("/:id", DeleteRole)
 }

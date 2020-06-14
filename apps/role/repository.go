@@ -3,8 +3,7 @@ package role
 import (
 	repository "dbdms/apps/repository"
 	helper "dbdms/helpers"
-	"fmt"
-	"os/user"
+	"errors"
 
 	"github.com/jinzhu/gorm"
 )
@@ -37,14 +36,13 @@ func (r *roleRepository) Update(role interface{}) error {
 }
 
 func (r *roleRepository) Delete(role interface{}) error {
-	fmt.Println(role)
-	var user user.User
-	err := r.db.Model(&user).Delete(&role).Error
-	if err != nil {
-		fmt.Println(1111111111111111)
-		return err
+	var count int
+	r.db.Raw("select count(role_id) from user_role_mapping where role_id = ?", role.(*Role).ID).Row().Scan(&count)
+	if count > 0 {
+		return errors.New("Role has been used by user")
 	}
-	err = r.db.Save(role).Error
+
+	err := r.db.Save(role).Error
 	return err
 }
 
@@ -56,13 +54,15 @@ func (r *roleRepository) FindSingle(condition string, params ...interface{}) int
 		return &role
 	}
 	return nil
-
 }
 
 // find role by id
 func (r *roleRepository) FindOne(id int) interface{} {
 	var role Role
-	r.db.Where("id = ? and is_deleted = 0", id).First(&role)
+	err := r.db.Where("id = ? and is_deleted = 0", id).First(&role).Error
+	if err != nil {
+		return nil
+	}
 	if role.ID == 0 {
 		return nil
 	}
@@ -92,5 +92,4 @@ func (r *roleRepository) FindPage(page int, pageSize int, andCons map[string]int
 	}
 	r.db.Limit(pageSize).Offset((page - 1) * pageSize).Order("update_at desc").Find(&rows).Count(&total)
 	return &helper.PageBean{Page: page, PageSize: pageSize, Total: total, Rows: rows}
-
 }

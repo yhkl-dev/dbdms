@@ -2,12 +2,40 @@ package role
 
 import (
 	helper "dbdms/helpers"
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
+
+func SaveRole(context *gin.Context) {
+	role := &Role{}
+	err := context.Bind(&role)
+	if err == nil {
+		role.DeleteAt = nil
+		roleService := RoleServiceInstance(RoleRepositoryIntance(helper.SQL))
+		err := roleService.SaveOrUpdate(role)
+		if err == nil {
+			context.JSON(http.StatusOK, &helper.JSONObject{
+				Code:    "1",
+				Message: helper.StatusText(helper.SaveStatusOK),
+			})
+			return
+		}
+		context.JSON(http.StatusOK, &helper.JSONObject{
+			Code:    "0",
+			Message: helper.StatusText(helper.SaveStatusError),
+			Content: err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, helper.JSONObject{
+		Code:    "0",
+		Message: helper.StatusText(helper.BindModelError),
+		Content: err,
+	})
+	return
+}
 
 func SaveOrUpdateRole(context *gin.Context) {
 	roleIDString := context.Param("id")
@@ -66,7 +94,6 @@ func GetRoleDetail(context *gin.Context) {
 	roleIDString := context.Param("id")
 	roleService := RoleServiceInstance(RoleRepositoryIntance(helper.SQL))
 	roleID, err := strconv.Atoi(roleIDString)
-	fmt.Println(roleID)
 	if err == nil {
 		role := roleService.GetByID(roleID)
 		if role != nil {
@@ -95,18 +122,18 @@ func DeleteRole(context *gin.Context) {
 	roleService := RoleServiceInstance(RoleRepositoryIntance(helper.SQL))
 	roleID, err := strconv.Atoi(roleIDString)
 	if err == nil {
-		role := roleService.DeleteByID(roleID)
-		if role != nil {
+		err = roleService.DeleteByID(roleID)
+		if err == nil {
 			context.JSON(http.StatusOK, helper.JSONObject{
 				Code:    "1",
-				Content: role,
+				Message: helper.StatusText(helper.DeleteStatusOK),
 			})
 			return
 
 		}
 		context.JSON(http.StatusOK, helper.JSONObject{
 			Code:    "0",
-			Message: helper.StatusText(helper.ResourceDoesNotExist),
+			Message: err.Error(),
 		})
 		return
 
