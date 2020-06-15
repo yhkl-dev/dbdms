@@ -15,6 +15,7 @@ import (
 func RegisterAPIRoutes(router *gin.Engine) {
 	api := router.Group("api")
 	api.Use(system.JWTAuth())
+	api.Use(system.Permission())
 	{
 		v1.RegisterRouter(api)
 	}
