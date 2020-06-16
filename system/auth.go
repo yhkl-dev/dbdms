@@ -2,12 +2,15 @@ package system
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 )
 
 // JWTAuth Mid ware
@@ -29,6 +32,8 @@ func JWTAuth() gin.HandlerFunc {
 		}
 		j := NewJWT()
 		claims, err := j.ResolveToken(token)
+		fmt.Println(claims.Name)
+		fmt.Println(claims.Phone)
 		if err != nil {
 			context.JSON(http.StatusUnauthorized, gin.H{
 				"status":  -1,
@@ -37,8 +42,49 @@ func JWTAuth() gin.HandlerFunc {
 			context.Abort()
 			return
 		}
+		fmt.Println(path)
+		//		err := db.Raw("select ")
+		method := context.Request.Method
+		fmt.Println(method)
+		matched, _ := isRuleMatch(path)
+		//		im, _ := regex.MatchLetterNumMinAndMax(user.UserName, 4, 6, "username")
+		fmt.Println(matched)
+		if matched {
+			fmt.Println("ssssssssssss")
+			//			p := strings.Replace(path, `\/(\d+)`, `\/\:id`, -1)
+			reg := regexp.MustCompile(`\/(\d+)`)
+			path = reg.ReplaceAllString(path, `/:id`)
+			fmt.Println(path)
+		}
+		permPath := fmt.Sprintf("%v:%v", method, path)
+		fmt.Println(permPath)
+		s := `
+			SELECT
+				DISTINCT
+				p.code_name
+			FROM
+				USER u,
+				user_role_mapping ur,
+				role r,
+				role_permission_mapping rp,
+				permission p 
+			WHERE
+				ur.user_id = u.id 
+				AND ur.role_id = r.id 
+				AND rp.role_id = r.id 
+				AND rp.permission_id = p.id 
+				AND u.user_name = "%v"
+		`
+		sql := fmt.Sprintf(s, claims.Name)
+		fmt.Println(sql)
+		//		db.Raw(sql, nil).Scan(&res)
+		fmt.Println(err)
 		context.Set("claims", claims)
 	}
+}
+
+type res struct {
+	CodeName string
 }
 
 // JWT struct
@@ -47,6 +93,7 @@ type JWT struct {
 }
 
 var (
+	db *gorm.DB
 	// TokenExpired the token has been expired
 	TokenExpired error = errors.New("Token has beed expired")
 	// TokenNotValidYet token is not valid
@@ -127,4 +174,11 @@ func (j *JWT) RefreshTokne(tokenString string) (string, error) {
 		return j.CreateToken(*claims)
 	}
 	return "", TokenInvalid
+}
+
+func isRuleMatch(text string) (ok bool, err error) {
+	if matched, _ := regexp.MatchString(`\/api\/v1\/(.*)\/(\d+)`, text); matched {
+		return true, nil
+	}
+	return false, errors.New("not found")
 }
