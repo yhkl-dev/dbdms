@@ -4,6 +4,7 @@ import helper "dbdms/helpers"
 
 type PermissionService interface {
 	GetPage(page int, pageSize int, permission *Permission) *helper.PageBean
+	GetByID(id int) *Permission
 }
 
 type permissionService struct {
@@ -15,6 +16,17 @@ var permissionServiceIns = &permissionService{}
 func PermissionServiceInstance(repo PermissionRepository) PermissionService {
 	permissionServiceIns.repo = repo
 	return permissionServiceIns
+}
+
+func (p *permissionService) GetByID(id int) *Permission {
+	if id <= 0 {
+		return nil
+	}
+	perm := p.repo.FindOne(id)
+	if perm != nil {
+		return perm.(*Permission)
+	}
+	return nil
 }
 
 func (p *permissionService) GetPage(page int, pageSize int, permission *Permission) *helper.PageBean {

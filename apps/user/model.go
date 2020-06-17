@@ -41,18 +41,6 @@ func (user *User) Validator() error {
 	return nil
 }
 
-func (user *User) RegisterPermission() map[string]map[string]string {
-	var permList = make(map[string]map[string]string)
-	permList["can_view_users"] = map[string]string{"ModelName": "user", "PermissionName": "GET", "CodeName": "/api/v1/user"}
-	permList["can_add_users"] = map[string]string{"ModelName": "user", "PermissionName": "POST", "CodeName": "/api/v1/user/(.id+)"}
-	permList["can_update_users"] = map[string]string{"ModelName": "user", "PermissionName": "PUT", "CodeName": "/api/v1/user/(.d+)"}
-	permList["can_delete_users"] = map[string]string{"ModelName": "user", "PermissionName": "DELETE", "CodeName": "/api/v1/user/(.d+)"}
-	//	permList["can_add_user"] = "/api/v1/user"
-	//	permList["can_update_user"] = "/api/v1/user/(.d+)"
-	//	permList["can_delete_user"] = "/api/v1/user/(.d+)"
-	return permList
-}
-
 func init() {
 	helper.SQL.AutoMigrate(&User{})
 }

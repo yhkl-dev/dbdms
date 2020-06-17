@@ -2,6 +2,7 @@ package user
 
 import (
 	helper "dbdms/helpers"
+	"dbdms/midware"
 	"dbdms/system"
 	"net/http"
 	"strconv"
@@ -87,8 +88,8 @@ func Register(context *gin.Context) {
 
 // generateToken
 func generateToken(context *gin.Context, user *User) {
-	j := system.NewJWT()
-	claims := system.CustomClaims{
+	j := midware.NewJWT()
+	claims := midware.CustomClaims{
 		ID:    string(user.ID),
 		Name:  user.UserName,
 		Phone: user.Phone,
@@ -120,7 +121,7 @@ func init() {
 		helper.ErrorLogger.Errorln("Read Token Config Error: ", err)
 	}
 	if len(strings.TrimSpace(system.GetTokenConfig().SignKey)) > 0 {
-		system.SetSignKey(system.GetTokenConfig().SignKey)
+		midware.SetSignKey(system.GetTokenConfig().SignKey)
 	}
 }
 

@@ -23,10 +23,16 @@ func init() {
 	//}
 	//	helper.SQL.Create()
 	var permList = make(map[string]map[string]string)
-	permList["can_view_user"] = map[string]string{"id": "1", "ModelName": "user", "PermissionName": "GET", "CodeName": "/api/v1/user"}
-	permList["can_add_user"] = map[string]string{"id": "2", "ModelName": "user", "PermissionName": "POST", "CodeName": "/api/v1/user/(.id+)"}
-	permList["can_update_user"] = map[string]string{"id": "3", "ModelName": "user", "PermissionName": "PUT", "CodeName": "/api/v1/user/(.d+)"}
-	permList["can_delete_user"] = map[string]string{"id": "4", "ModelName": "user", "PermissionName": "DELETE", "CodeName": "/api/v1/user/(.d+)"}
+	permList["can_view_users"] = map[string]string{"id": "1", "ModelName": "user", "PermissionName": "GET", "CodeName": "GET:/api/v1/user"}
+	permList["can_view_user"] = map[string]string{"id": "2", "ModelName": "user", "PermissionName": "GET", "CodeName": "GET:/api/v1/user/:id"}
+	permList["can_add_user"] = map[string]string{"id": "3", "ModelName": "user", "PermissionName": "POST", "CodeName": "POST:/api/v1/user/:id"}
+	permList["can_update_user"] = map[string]string{"id": "4", "ModelName": "user", "PermissionName": "PUT", "CodeName": "PUT:/api/v1/user/:id"}
+	permList["can_delete_user"] = map[string]string{"id": "5", "ModelName": "user", "PermissionName": "DELETE", "CodeName": "DELETE:/api/v1/user/:id"}
+	permList["can_views_roles"] = map[string]string{"id": "6", "ModelName": "role", "PermissionName": "GET", "CodeName": "GET:/api/v1/role"}
+	permList["can_view_role"] = map[string]string{"id": "7", "ModelName": "role", "PermissionName": "GET", "CodeName": "GET:/api/v1/role/:id"}
+	permList["can_add_role"] = map[string]string{"id": "8", "ModelName": "role", "PermissionName": "POST", "CodeName": "POST:/api/v1/role/:id"}
+	permList["can_update_role"] = map[string]string{"id": "9", "ModelName": "role", "PermissionName": "PUT", "CodeName": "PUT:/api/v1/role/:id"}
+	permList["can_delete_role"] = map[string]string{"id": "10", "ModelName": "role", "PermissionName": "DELETE", "CodeName": "DELETE:/api/v1/role/:id"}
 	for cn, pn := range permList {
 		id, _ := strconv.Atoi(pn["id"])
 		sql := fmt.Sprintf("INSERT IGNORE INTO permission (id,  mode_name, permission_name, code_name, description ) VALUES (%v, \"%v\",\"%v\", \"%v\", \"%v\" )", id, pn["ModelName"], pn["PermissionName"], pn["CodeName"], cn)

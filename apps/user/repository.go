@@ -30,6 +30,7 @@ func (r *userRepository) Insert(user interface{}) error {
 }
 
 func (r *userRepository) Update(user interface{}) error {
+	r.db.Model(user.(*User)).Association("Roles").Replace(user.(*User).Roles)
 	err := r.db.Save(user).Error
 	return err
 }

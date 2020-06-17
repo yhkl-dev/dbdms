@@ -31,7 +31,12 @@ func (r *roleRepository) Insert(role interface{}) error {
 }
 
 func (r *roleRepository) Update(role interface{}) error {
-	err := r.db.Save(role).Error
+	//	r.db.Model(&role).Association("Permissions").Clear()
+	err := r.db.Model(role.(*Role)).Association("Permissions").Replace(role.(*Role).Permissions).Error
+	if err != nil {
+		return err
+	}
+	err = r.db.Save(role).Error
 	return err
 }
 
@@ -90,6 +95,6 @@ func (r *roleRepository) FindPage(page int, pageSize int, andCons map[string]int
 			r.db = r.db.Where(k, v)
 		}
 	}
-	r.db.Limit(pageSize).Offset((page - 1) * pageSize).Order("update_at desc").Find(&rows).Count(&total)
+	r.db.Preload("Permissions").Limit(pageSize).Offset((page - 1) * pageSize).Order("update_at desc").Find(&rows).Count(&total)
 	return &helper.PageBean{Page: page, PageSize: pageSize, Total: total, Rows: rows}
 }

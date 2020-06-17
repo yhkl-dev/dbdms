@@ -1,9 +1,9 @@
 package role
 
 import (
+	"dbdms/apps/permission"
 	helper "dbdms/helpers"
 	"errors"
-	"fmt"
 	"time"
 )
 
@@ -48,6 +48,13 @@ func (rs *roleService) SaveOrUpdate(role *Role) error {
 	}
 	role.CreateAt = persist.CreateAt
 	role.UpdateAt = time.Now()
+	var permissions []permission.Permission
+	permissionService := permission.PermissionServiceInstance(permission.PermissionRepositoryInterface(helper.SQL))
+
+	for _, pID := range role.PermissionList {
+		permissions = append(permissions, *permissionService.GetByID(pID))
+	}
+	role.Permissions = permissions
 
 	return rs.repo.Update(role)
 }
@@ -58,7 +65,7 @@ func (rs *roleService) GetByID(id int) *Role {
 	}
 	role := rs.repo.FindOne(id)
 	if role != nil {
-		fmt.Println(1111111112)
+		return role.(*Role)
 	}
 	return nil
 }

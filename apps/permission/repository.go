@@ -42,7 +42,13 @@ func (p *permissionRepository) FindSingle(condition string, params ...interface{
 }
 
 func (p *permissionRepository) FindOne(id int) interface{} {
-	return nil
+	var permission Permission
+	p.db.Where("id = ?", id).First(&permission)
+	if permission.ID == 0 {
+		return nil
+	}
+	return &permission
+
 }
 
 func (p *permissionRepository) FindMore(condition string, params ...interface{}) interface{} {

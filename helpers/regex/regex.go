@@ -70,16 +70,25 @@ const (
 	/** 匹配十六进制字符串 */
 	HexStrRegex = `^[0-9A-Fa-f]+$`
 
-	RulesRegext = `/api/v1/(.*)/(.d+)`
+	RulesRegext = `\/api\/v1\/(.*)\/(\d+)`
 )
 
 func IsRuleMatch(text string) (ok bool, err error) {
+	//if matched, _ := regexp.MatchString(`\/api\/v1\/(.*)\/(\d+)`, text); matched {
 	if matched, _ := regexp.MatchString(RulesRegext, text); matched {
 		return true, nil
 	}
 	return false, errors.New("not found")
 }
 
+/*
+func IsRuleMatch(text string) (ok bool, err error) {
+	if matched, _ := regexp.MatchString(RulesRegext, text); matched {
+		return true, nil
+	}
+	return false, errors.New("not found")
+}
+*/
 // 匹配是否为日期格式
 func IsDate(text string) (ok bool, err error) {
 	if matched, _ := regexp.MatchString(DateRegex, text); matched {

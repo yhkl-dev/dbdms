@@ -50,6 +50,7 @@ func SaveOrUpdateRole(context *gin.Context) {
 	}
 	var role Role
 	role.ID = roleID
+
 	if err := context.Bind(&role); err == nil {
 		role.DeleteAt = nil
 		roleService := RoleServiceInstance(RoleRepositoryIntance(helper.SQL))

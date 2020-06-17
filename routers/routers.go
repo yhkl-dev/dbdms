@@ -2,8 +2,8 @@ package routers
 
 import (
 	"dbdms/apps/user"
+	"dbdms/midware"
 	v1 "dbdms/routers/api/v1"
-	"dbdms/system"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +14,7 @@ import (
 // RegisterAPIRoutes register all api routers
 func RegisterAPIRoutes(router *gin.Engine) {
 	api := router.Group("api")
-	api.Use(system.JWTAuth())
+	api.Use(midware.JWTAuth())
 	{
 		v1.RegisterRouter(api)
 	}
@@ -31,7 +31,7 @@ func RegisterOpenRoutes(router *gin.Engine) {
 func RegisterAppRoutes(router *gin.Engine) {
 	app := router.Group("app")
 	// 鉴权
-	app.Use(system.JWTAuth())
+	app.Use(midware.JWTAuth())
 	app.GET("hello", func(context *gin.Context) {
 		context.String(http.StatusOK, "Hello APP")
 	})

@@ -1,6 +1,8 @@
-package system
+package midware
 
 import (
+	helper "dbdms/helpers"
+	"dbdms/helpers/regex"
 	"errors"
 	"fmt"
 	"net/http"
@@ -32,8 +34,6 @@ func JWTAuth() gin.HandlerFunc {
 		}
 		j := NewJWT()
 		claims, err := j.ResolveToken(token)
-		fmt.Println(claims.Name)
-		fmt.Println(claims.Phone)
 		if err != nil {
 			context.JSON(http.StatusUnauthorized, gin.H{
 				"status":  -1,
@@ -42,26 +42,16 @@ func JWTAuth() gin.HandlerFunc {
 			context.Abort()
 			return
 		}
-		fmt.Println(path)
-		//		err := db.Raw("select ")
 		method := context.Request.Method
-		fmt.Println(method)
-		matched, _ := isRuleMatch(path)
-		//		im, _ := regex.MatchLetterNumMinAndMax(user.UserName, 4, 6, "username")
-		fmt.Println(matched)
+		matched, _ := regex.IsRuleMatch(path)
 		if matched {
-			fmt.Println("ssssssssssss")
-			//			p := strings.Replace(path, `\/(\d+)`, `\/\:id`, -1)
 			reg := regexp.MustCompile(`\/(\d+)`)
 			path = reg.ReplaceAllString(path, `/:id`)
-			fmt.Println(path)
 		}
 		permPath := fmt.Sprintf("%v:%v", method, path)
-		fmt.Println(permPath)
 		s := `
 			SELECT
-				DISTINCT
-				p.code_name
+				count(p.code_name)
 			FROM
 				USER u,
 				user_role_mapping ur,
@@ -74,17 +64,21 @@ func JWTAuth() gin.HandlerFunc {
 				AND rp.role_id = r.id 
 				AND rp.permission_id = p.id 
 				AND u.user_name = "%v"
+				AND p.code_name = "%v"
 		`
-		sql := fmt.Sprintf(s, claims.Name)
-		fmt.Println(sql)
-		//		db.Raw(sql, nil).Scan(&res)
-		fmt.Println(err)
+		sql := fmt.Sprintf(s, claims.Name, permPath)
+		var count int
+		helper.SQL.Raw(sql).Row().Scan(&count)
+		if count == 0 {
+			context.JSON(http.StatusUnauthorized, gin.H{
+				"status":  -1,
+				"message": "permission denied, No permission",
+			})
+			context.Abort()
+			return
+		}
 		context.Set("claims", claims)
 	}
-}
-
-type res struct {
-	CodeName string
 }
 
 // JWT struct
@@ -174,11 +168,4 @@ func (j *JWT) RefreshTokne(tokenString string) (string, error) {
 		return j.CreateToken(*claims)
 	}
 	return "", TokenInvalid
-}
-
-func isRuleMatch(text string) (ok bool, err error) {
-	if matched, _ := regexp.MatchString(`\/api\/v1\/(.*)\/(\d+)`, text); matched {
-		return true, nil
-	}
-	return false, errors.New("not found")
 }
