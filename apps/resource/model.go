@@ -1,6 +1,10 @@
 package resource
 
-import "os/user"
+import (
+	helper "dbdms/helpers"
+	"os/user"
+	"time"
+)
 
 type Resource struct {
 	ID          int        `gorm:"AUTO_INCREMENT;primary_key"`
@@ -13,4 +17,12 @@ type Resource struct {
 	Description string     `gorm:"type:varchar(128);" json:"description" form:"port"`
 	IsShare     int        `gorm:"type:int; default:0; comment:'0: no 1:yes'" json:"is_share" form:"is_share"`
 	User        *user.User `gorm:"ForeignKey:ID" json:"user" form:"user"`
+	CreateAt    time.Time  `gorm:"column:create_at;default:current_timestamp"`
+	UpdateAt    time.Time  `gorm:"column:update_at;default:current_timestamp ON update current_timestamp"`
+	IsDeleted   int        `gorm:"type:int;default:0" json:"is_deleted"` // 0: no 1: yes
+	DeleteAt    *time.Time `gorm:"column:delete_at"`
+}
+
+func init() {
+	helper.SQL.AutoMigrate(&Resource{})
 }
