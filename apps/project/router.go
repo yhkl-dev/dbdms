@@ -8,5 +8,6 @@ import (
 
 func RegisterRouter(router *gin.RouterGroup) {
 	fmt.Println("router")
+	fmt.Println("xxxxxxxxx")
 
 }
