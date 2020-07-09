@@ -6,7 +6,8 @@ import (
 	"time"
 )
 
-type Resource struct {
+// DBResource struct
+type DBResource struct {
 	ID          int        `gorm:"AUTO_INCREMENT;primary_key"`
 	ConnectName string     `gorm:"type:varchar(32);unique_index;not null" json:"connect_name" form:"connect_name" binding:"required"`
 	DBType      int        `gorm:"type:int;comment:'数据库类型: 0: MySQL 1: Oracle: 2: PostgreSQL';default:0" json:"db_type" form:"db_type"`

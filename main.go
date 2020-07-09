@@ -4,7 +4,6 @@ import (
 	helper "dbdms/helpers"
 	"dbdms/routers"
 	system "dbdms/system"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -22,8 +21,6 @@ func init() {
 }
 
 func main() {
-	password := helper.SHA256("&898ylk11")
-	fmt.Println(password)
 	ginConfig := system.GetGinConfig()
 	gin.SetMode(ginConfig.RunMode)
 	router := gin.New()

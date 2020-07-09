@@ -26,20 +26,17 @@ func ProjectRepositoryInterface(db *gorm.DB) ProjectRepository {
 func (r *projectRepository) Insert(project interface{}) error {
 	err := r.db.Create(project).Error
 	return err
-
 }
 
 func (r *projectRepository) Update(project interface{}) error {
 	//r.db.Model(project.(*Permission)).Association("Roles").Replace(project.(*Permission).Roles)
 	err := r.db.Save(project).Error
 	return err
-
 }
 
 func (r *projectRepository) Delete(project interface{}) error {
 	err := r.db.Delete(project).Error
 	return err
-
 }
 
 // find project by name
