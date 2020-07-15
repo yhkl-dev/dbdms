@@ -4,7 +4,6 @@ import (
 	helper "dbdms/helpers"
 	"dbdms/routers"
 	system "dbdms/system"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -15,7 +14,6 @@ import (
 
 func init() {
 	err := system.LoadServerConfig("conf/server-config.yml")
-	fmt.Println("llll")
 	if err != nil {
 		helper.ErrorLogger.Errorln("Read Config file error: ", err)
 		os.Exit(3)
