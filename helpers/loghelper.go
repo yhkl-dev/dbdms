@@ -8,18 +8,18 @@ import (
 
 var ErrorLogger, AccessLogger, WorkLogger, SQLLogger *logrus.Logger
 
-func Logger(outpath string) *logrus.Logger {
+func Logger(outPath string) *logrus.Logger {
 	logger := logrus.New()
-	_, err := os.Stat(outpath)
+	_, err := os.Stat(outPath)
 	if os.IsNotExist(err) {
-		os.Create(outpath)
+		_, _ = os.Create(outPath)
 	}
 
-	file, err := os.OpenFile(outpath, os.O_CREATE|os.O_WRONLY, 0666)
+	file, err := os.OpenFile(outPath, os.O_CREATE|os.O_WRONLY, 0666)
 	if err == nil {
 		logger.Out = file
 	} else {
-		logger.Info("Open" + outpath + "'s log file failed, use default log format'")
+		logger.Info("Open" + outPath + "'s log file failed, use default log format'")
 	}
 	return logger
 }

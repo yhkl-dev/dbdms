@@ -17,11 +17,6 @@ type Permission struct {
 
 func init() {
 	helper.SQL.AutoMigrate(&Permission{})
-	//userPerm := user.User{}.RegisterPermission()
-	//for _, pn := range userPerm {
-	//	fmt.Println(pn)
-	//}
-	//	helper.SQL.Create()
 	var permList = make(map[string]map[string]string)
 	permList["can_view_users"] = map[string]string{"id": "1", "ModelName": "user", "PermissionName": "GET", "CodeName": "GET:/api/v1/user"}
 	permList["can_view_user"] = map[string]string{"id": "2", "ModelName": "user", "PermissionName": "GET", "CodeName": "GET:/api/v1/user/:id"}

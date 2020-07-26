@@ -12,7 +12,6 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 )
 
 // JWTAuth Mid ware
@@ -68,8 +67,8 @@ func JWTAuth() gin.HandlerFunc {
 		`
 		sql := fmt.Sprintf(s, claims.Name, permPath)
 		var count int
-		helper.SQL.Raw(sql).Row().Scan(&count)
-		if count == 0 {
+		err = helper.SQL.Raw(sql).Row().Scan(&count)
+		if count == 0 || err != nil {
 			context.JSON(http.StatusUnauthorized, gin.H{
 				"status":  -1,
 				"message": "permission denied, No permission",
@@ -87,7 +86,6 @@ type JWT struct {
 }
 
 var (
-	db *gorm.DB
 	// TokenExpired the token has been expired
 	TokenExpired error = errors.New("Token has beed expired")
 	// TokenNotValidYet token is not valid

@@ -21,10 +21,10 @@ func PermissionRepositoryInterface(db *gorm.DB) PermissionRepository {
 	permissionRepoIns.db = db
 	return permissionRepoIns
 }
+
 func (p *permissionRepository) Insert(permission interface{}) error {
 	err := p.db.Create(permission).Error
 	return err
-
 }
 
 func (p *permissionRepository) Update(permission interface{}) error {
@@ -48,7 +48,6 @@ func (p *permissionRepository) FindOne(id int) interface{} {
 		return nil
 	}
 	return &permission
-
 }
 
 func (p *permissionRepository) FindMore(condition string, params ...interface{}) interface{} {
@@ -62,13 +61,11 @@ func (p *permissionRepository) FindPage(page int, pageSize int, andCons map[stri
 	if andCons != nil && len(andCons) > 0 {
 		for k, v := range andCons {
 			p.db = p.db.Where(k, v)
-
 		}
 	}
 	if orCons != nil && len(orCons) > 0 {
 		for k, v := range orCons {
 			p.db = p.db.Where(k, v)
-
 		}
 	}
 	p.db.Limit(pageSize).Offset((page - 1) * pageSize).Order("id").Find(&rows).Count(&total)

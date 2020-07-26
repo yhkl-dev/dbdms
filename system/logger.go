@@ -56,8 +56,6 @@ func Logger(log *logrus.Logger) gin.HandlerFunc {
 			} else {
 				entry.Info(msg)
 			}
-
 		}
-
 	}
 }
