@@ -35,5 +35,4 @@ func RegisterAppRoutes(router *gin.Engine) {
 	app.GET("hello", func(context *gin.Context) {
 		context.String(http.StatusOK, "Hello APP")
 	})
-
 }

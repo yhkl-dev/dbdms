@@ -18,5 +18,4 @@ func ListAllPermissions(context *gin.Context) {
 		Code:    "1",
 		Content: pageBean,
 	})
-
 }

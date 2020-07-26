@@ -30,7 +30,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/rogpeppe/go-internal v1.6.0 // indirect
-	github.com/silenceper/gowatch v0.0.0-20200530075017-a42b5eca00f9 // indirect
+	github.com/silenceper/gowatch v0.0.0-20200624073703-8e473a9db258 // indirect
 	github.com/silenceper/log v0.0.0-20171204144354-e5ac7fa8a76a // indirect
 	github.com/sirupsen/logrus v1.6.0
 	github.com/stretchr/objx v0.2.0 // indirect
