@@ -15,12 +15,12 @@ type projectRepository struct {
 	db *gorm.DB
 }
 
-var projectRepository = &projectRepository{}
+var projectRepoIns = &projectRepository{}
 
-// ProejctRepositoryInterface instance for storage object
+// ProjectRepositoryInterface instance for storage object
 func ProjectRepositoryInterface(db *gorm.DB) ProjectRepository {
 	projectRepoIns.db = db
-	return porjectRepoIns
+	return projectRepoIns
 }
 
 func (r *projectRepository) Insert(project interface{}) error {
