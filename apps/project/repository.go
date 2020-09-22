@@ -41,13 +41,13 @@ func (r *projectRepository) Delete(project interface{}) error {
 
 // find project by name
 func (r *projectRepository) FindSingle(condition string, params ...interface{}) interface{} {
-	var project Permission
+	var project Project
 	//r.db.Preload("Roles").Where(condition, params).First(&project)
 	r.db.Where(condition, params).First(&project)
-	if project.ID != 0 {
-		return &project
+	if project.ID == 0 {
+		return nil
 	}
-	return nil
+	return &project
 
 }
 
@@ -57,7 +57,6 @@ func (r *projectRepository) FindOne(id int) interface{} {
 	r.db.Where("id = ?", id).First(&project)
 	if project.ID == 0 {
 		return nil
-
 	}
 	//	r.db.Model(&project).Association("Roles").Find(&roles)
 	//	project.Roles = roles
