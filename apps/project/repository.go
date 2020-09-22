@@ -48,7 +48,6 @@ func (r *projectRepository) FindSingle(condition string, params ...interface{}) 
 		return nil
 	}
 	return &project
-
 }
 
 // find project by id
@@ -61,7 +60,6 @@ func (r *projectRepository) FindOne(id int) interface{} {
 	//	r.db.Model(&project).Association("Roles").Find(&roles)
 	//	project.Roles = roles
 	return &project
-
 }
 
 // 条件查询返回多值
@@ -83,7 +81,6 @@ func (r *projectRepository) FindPage(page int, pageSize int, andCons map[string]
 			r.db = r.db.Where(k, v)
 
 		}
-
 	}
 	if orCons != nil && len(orCons) > 0 {
 		for k, v := range orCons {
@@ -93,5 +90,4 @@ func (r *projectRepository) FindPage(page int, pageSize int, andCons map[string]
 	//r.db.Preload("Roles").Limit(pageSize).Offset((page - 1) * pageSize).Order("login_time desc").Find(&rows).Count(&total)
 	r.db.Limit(pageSize).Offset((page - 1) * pageSize).Order("create_at desc").Find(&rows).Count(&total)
 	return &helper.PageBean{Page: page, PageSize: pageSize, Total: total, Rows: rows}
-
 }
