@@ -1,7 +1,6 @@
 package jwtauth
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -35,7 +34,6 @@ func AUTH() gin.HandlerFunc {
 			context.Abort()
 			return
 		}
-		fmt.Println("claims", claims)
 		context.Set("claims", claims)
 		context.Next()
 	}

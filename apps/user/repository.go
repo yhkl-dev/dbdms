@@ -55,6 +55,7 @@ func (ur *userRepo) FindSingle(condition string, params ...interface{}) interfac
 	}
 	return nil
 }
+
 func (ur *userRepo) FindMore(condition string, params ...interface{}) interface{} {
 	users := make([]*User, 0)
 	ur.db.Where(condition, params).Find(&users)
@@ -79,5 +80,4 @@ func (ur *userRepo) FindPage(page int, pageSize int, andCons map[string]interfac
 	// ur.db.Limit(pageSize).Offset((page - 1) * pageSize).Order("login_time desc").Find(&rows).Count(&total)
 	ur.db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&rows).Count(&total)
 	return &utils.PageBean{Page: page, PageSize: pageSize, Total: total, Rows: rows}
-
 }
