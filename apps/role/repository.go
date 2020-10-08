@@ -65,8 +65,8 @@ func (rp *roleRepo) FindMore(condition string, params ...interface{}) interface{
 
 func (rp *roleRepo) FindOne(id int) interface{} {
 	var role Role
-	rp.db.Where("role_id = ?", id).First(&role)
-	if role.RoleID == 0 {
+	err := rp.db.Where("role_id = ?", id).First(&role).Error
+	if role.RoleID == 0 || err != nil {
 		return nil
 	}
 	return &role

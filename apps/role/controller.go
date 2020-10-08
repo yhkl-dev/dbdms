@@ -4,6 +4,7 @@ import (
 	"dbdms/db"
 	"dbdms/utils"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -55,9 +56,23 @@ func AddRole(context *gin.Context) {
 	})
 }
 
-// DeleteRole delete role 删除角色
-func DeleteRole(context *gin.Context) {
-
+// DeleteRoleByID delete role 删除角色
+func DeleteRoleByID(context *gin.Context) {
+	id, _ := strconv.Atoi(context.Param("id"))
+	roleService := ServiceInstance(RepoInterface(db.SQL))
+	err := roleService.DeleteRoleByID(id)
+	if err != nil {
+		context.JSON(http.StatusOK, utils.JSONObject{
+			Code:    "0",
+			Message: utils.StatusText(utils.DeleteStatusErr),
+			Content: err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, utils.JSONObject{
+		Code:    "1",
+		Message: utils.StatusText(utils.DeleteStatusOK),
+	})
 }
 
 // UpdateRole update role info 更新角色信息

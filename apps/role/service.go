@@ -43,11 +43,11 @@ func (rs *roleService) GetByID(id int) *Role {
 }
 
 func (rs *roleService) DeleteRoleByID(id int) error {
-	role := rs.repo.FindOne(id).(*Role)
-	if role == nil || role.RoleID == 0 {
+	role := rs.repo.FindOne(id)
+	if role == nil {
 		return errors.New(utils.StatusText(utils.DeleteObjIsNil))
 	}
-	return rs.repo.Delete(role)
+	return rs.repo.Delete(role.(*Role))
 }
 
 func (rs *roleService) GetPage(page int, pageSize int, role *Role) *utils.PageBean {

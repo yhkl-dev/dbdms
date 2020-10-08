@@ -6,6 +6,6 @@ import "github.com/gin-gonic/gin"
 func RegisterRouter(router *gin.RouterGroup) {
 	router.GET("", ListAllRoles)
 	router.POST("", AddRole)
-	// router.DELETE("/:id", DeleteUser)
+	router.DELETE("/:id", DeleteRoleByID)
 	// router.PUT("/:id", UpdateUserProfile)
 }
