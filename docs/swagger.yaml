@@ -1,0 +1,19 @@
+info:
+  contact: {}
+  license: {}
+paths:
+  /api/v1/users:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: stirng
+      summary: 获取用户列表
+      tags:
+      - UserController
+swagger: "2.0"

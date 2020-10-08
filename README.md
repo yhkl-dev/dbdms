@@ -1,8 +1,10 @@
 # dbdms
     database document management system
 
-### features
-+ RBAC
+### todo
++ RBAC 
++ JWT
++ CMDB
 
 
 ### run 

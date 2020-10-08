@@ -1,90 +1,83 @@
 package user
 
 import (
-	repository "dbdms/apps/repository"
-	"dbdms/apps/role"
-	helper "dbdms/helpers"
+	"dbdms/apps"
+	"dbdms/utils"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
-type UserRepository interface {
-	repository.Repository
+// Repo user interface inplemented from common interface
+type Repo interface {
+	apps.RepositoryInterface
 }
 
-type userRepository struct {
+type userRepo struct {
 	db *gorm.DB
 }
 
-var userRepoIns = &userRepository{}
+var userRepoInstance = &userRepo{}
 
-// UserRepositoryInterface instance for storage object
-func UserRepositoryInterface(db *gorm.DB) UserRepository {
-	userRepoIns.db = db
-	return userRepoIns
+// RepoInterface instance for storage object
+func RepoInterface(db *gorm.DB) Repo {
+	userRepoInstance.db = db
+	return userRepoInstance
 }
 
-func (r *userRepository) Insert(user interface{}) error {
-	err := r.db.Create(user).Error
+func (ur *userRepo) Insert(m interface{}) error {
+	err := ur.db.Create(m).Error
 	return err
 }
 
-func (r *userRepository) Update(user interface{}) error {
-	r.db.Model(user.(*User)).Association("Roles").Replace(user.(*User).Roles)
-	err := r.db.Save(user).Error
+func (ur *userRepo) Update(m interface{}) error {
+	err := ur.db.Save(m).Error
+	return err
+}
+func (ur *userRepo) Delete(m interface{}) error {
+	err := ur.db.Delete(m).Error
 	return err
 }
 
-func (r *userRepository) Delete(user interface{}) error {
-	err := r.db.Delete(user).Error
-	return err
-}
-
-// find user by name
-func (r *userRepository) FindSingle(condition string, params ...interface{}) interface{} {
+func (ur *userRepo) FindOne(id int) interface{} {
 	var user User
-	r.db.Preload("Roles").Where(condition, params).First(&user)
+	ur.db.Where("user_id = ?", id).First(&user)
+	if user.UserID == 0 {
+		return nil
+	}
+	return &user
+}
+
+func (ur *userRepo) FindSingle(condition string, params ...interface{}) interface{} {
+	var user User
+	ur.db.Where(condition, params).First(&user)
 	if user.UserName != "" {
 		return &user
 	}
 	return nil
 }
-
-// find user by id
-func (r *userRepository) FindOne(id int) interface{} {
-	var user User
-	var roles []role.Role
-	r.db.Where("id = ?", id).First(&user)
-	if user.ID == 0 {
-		return nil
-	}
-	r.db.Model(&user).Association("Roles").Find(&roles)
-	user.Roles = roles
-	return &user
-}
-
-// 条件查询返回多值
-func (r *userRepository) FindMore(condition string, params ...interface{}) interface{} {
+func (ur *userRepo) FindMore(condition string, params ...interface{}) interface{} {
 	users := make([]*User, 0)
-	r.db.Preload("Roles").Where(condition, params).Find(&users)
+	ur.db.Where(condition, params).Find(&users)
 	return users
 }
 
-func (r *userRepository) FindPage(page int, pageSize int, andCons map[string]interface{}, orCons map[string]interface{}) (pageBean *helper.PageBean) {
-	total := 0
+func (ur *userRepo) FindPage(page int, pageSize int, andCons map[string]interface{}, orCons map[string]interface{}) (pageBean *utils.PageBean) {
+	var total int64
 	//	rows := make([]User, 0)
 	var rows []User
 
 	if andCons != nil && len(andCons) > 0 {
 		for k, v := range andCons {
-			r.db = r.db.Where(k, v)
+			ur.db = ur.db.Where(k, v)
 		}
 	}
 	if orCons != nil && len(orCons) > 0 {
 		for k, v := range orCons {
-			r.db = r.db.Where(k, v)
+			ur.db = ur.db.Where(k, v)
 		}
 	}
-	r.db.Preload("Roles").Limit(pageSize).Offset((page - 1) * pageSize).Order("login_time desc").Find(&rows).Count(&total)
-	return &helper.PageBean{Page: page, PageSize: pageSize, Total: total, Rows: rows}
+	// ur.db.Limit(pageSize).Offset((page - 1) * pageSize).Order("login_time desc").Find(&rows).Count(&total)
+	ur.db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&rows).Count(&total)
+	return &utils.PageBean{Page: page, PageSize: pageSize, Total: total, Rows: rows}
+
 }

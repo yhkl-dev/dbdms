@@ -1,41 +1,40 @@
 package user
 
 import (
-	"dbdms/apps/role"
-	helper "dbdms/helpers"
+	"dbdms/utils"
 	"errors"
-	"time"
 )
 
-type UserService interface {
+// Service user service instance
+type Service interface {
 	GetAll() []*User
 	GetUserByName(username string) *User
 	GetUserByPhone(phone string) *User
 	GetByID(id int) *User
-	GetPage(page int, pageSize int, user *User) *helper.PageBean
+	GetPage(page int, pageSize int, user *User) *utils.PageBean
 	DeleteByID(id int) error
 	SaveOrUpdate(user *User) error
 }
 
 var userServiceIns = &userService{}
 
-// UserServiceInstance 获取 userService 实例
-func UserServiceInstance(repo UserRepository) UserService {
+// ServiceInstance 获取 userService 实例
+func ServiceInstance(repo Repo) Service {
 	userServiceIns.repo = repo
 	return userServiceIns
 }
 
 type userService struct {
-	repo UserRepository
+	repo Repo
 }
 
 func (us *userService) GetAll() []*User {
-	users := us.repo.FindMore("1=1 and is_deleted=0").([]*User)
+	users := us.repo.FindMore("1=1").([]*User)
 	return users
 }
 
 func (us *userService) GetUserByName(username string) *User {
-	user := us.repo.FindSingle("user_name = ? and is_deleted=0", username)
+	user := us.repo.FindSingle("user_name = ?", username)
 	if user != nil {
 		return user.(*User)
 	}
@@ -43,7 +42,7 @@ func (us *userService) GetUserByName(username string) *User {
 }
 
 func (us *userService) GetUserByPhone(phone string) *User {
-	user := us.repo.FindSingle("phone = ? and is_deleted=0", phone)
+	user := us.repo.FindSingle("user_phone = ?", phone)
 	if user != nil {
 		return user.(*User)
 	}
@@ -63,72 +62,48 @@ func (us *userService) GetByID(id int) *User {
 
 func (us *userService) SaveOrUpdate(user *User) error {
 	if user == nil {
-		return errors.New(helper.StatusText(helper.SaveObjIsNil))
+		return errors.New(utils.StatusText(utils.SaveObjIsNil))
 	}
 	userByName := us.GetUserByName(user.UserName)
-	userByPhone := us.GetUserByPhone(user.Phone)
-	if user.ID == 0 {
-		if userByName != nil && userByName.ID != 0 {
-			return errors.New(helper.StatusText(helper.ExistSameNameError))
+	userByPhone := us.GetUserByPhone(user.UserPhone)
+	if user.UserID == 0 {
+		if userByName != nil && userByName.UserID != 0 {
+			return errors.New(utils.StatusText(utils.ExistSameNameError))
 		}
-		if userByPhone != nil && userByPhone.ID != 0 {
-			return errors.New(helper.StatusText(helper.ExistSamePhoneError))
+		if userByPhone != nil && userByPhone.UserID != 0 {
+			return errors.New(utils.StatusText(utils.ExistSamePhoneError))
 		}
-		var roles []role.Role
-		roleService := role.RoleServiceInstance(role.RoleRepositoryIntance(helper.SQL))
 
-		for _, roleID := range user.RoleList {
-			roles = append(roles, *roleService.GetByID(roleID))
-		}
-		user.Roles = roles
-
-		user.Password = helper.SHA256(user.Password)
+		user.UserPassword = utils.SHA256(user.UserPassword)
 		return us.repo.Insert(user)
 	}
-	persist := us.GetByID(user.ID)
-	if persist == nil || persist.ID == 0 {
-		return errors.New(helper.StatusText(helper.UpdateObjIsNil))
+	persist := us.GetByID(user.UserID)
+	if persist == nil || persist.UserID == 0 {
+		return errors.New(utils.StatusText(utils.UpdateObjIsNil))
 	}
-	if userByName != nil && userByName.ID != user.ID {
-		return errors.New(helper.StatusText(helper.ExistSameNameError))
+	if userByName != nil && userByName.UserID != user.UserID {
+		return errors.New(utils.StatusText(utils.ExistSameNameError))
 	}
-	if userByPhone != nil && userByPhone.ID != user.ID {
-		return errors.New(helper.StatusText(helper.ExistSamePhoneError))
+	if userByPhone != nil && userByPhone.UserID != user.UserID {
+		return errors.New(utils.StatusText(utils.ExistSamePhoneError))
 	}
-	user.CreateAt = persist.CreateAt
-	user.UpdateAt = time.Now()
-	if persist.Password != helper.SHA256(user.Password) {
-		user.Password = helper.SHA256(user.Password)
+	if persist.UserPassword != user.UserPassword {
+		user.UserPassword = utils.SHA256(user.UserPassword)
 	} else {
-		user.Password = persist.Password
-	}
-
-	if len(user.RoleList) == 0 {
-		user.Roles = persist.Roles
-	} else {
-		var roles []role.Role
-		roleService := role.RoleServiceInstance(role.RoleRepositoryIntance(helper.SQL))
-
-		for _, roleID := range user.RoleList {
-			roles = append(roles, *roleService.GetByID(roleID))
-		}
-		user.Roles = roles
+		user.UserPassword = persist.UserPassword
 	}
 	return us.repo.Update(user)
 }
 
 func (us *userService) DeleteByID(id int) error {
 	user := us.repo.FindOne(id).(*User)
-	if user == nil || user.ID == 0 {
-		return errors.New(helper.StatusText(helper.DeleteObjIsNil))
+	if user == nil || user.UserID == 0 {
+		return errors.New(utils.StatusText(utils.DeleteObjIsNil))
 	}
-	user.IsDeleted = 1
-	deleteTime := time.Now()
-	user.DeleteAt = &deleteTime
 	return us.repo.Update(user)
 }
 
-func (us *userService) GetPage(page int, pageSize int, user *User) *helper.PageBean {
+func (us *userService) GetPage(page int, pageSize int, user *User) *utils.PageBean {
 	if page == 0 {
 		page = 1
 	}
@@ -136,15 +111,15 @@ func (us *userService) GetPage(page int, pageSize int, user *User) *helper.PageB
 		pageSize = 10
 	}
 	addCons := make(map[string]interface{})
-	addCons["is_deleted = ?"] = "0"
+	// addCons["is_deleted = ?"] = "0"
 	if user != nil && user.UserName != "" {
 		addCons["user_name LIKE ?"] = "%" + user.UserName + "%"
 	}
-	if user != nil && user.Phone != "" {
-		addCons["phone LIKE ?"] = user.Phone + "%"
+	if user != nil && user.UserPhone != "" {
+		addCons["user_phone LIKE ?"] = user.UserPhone + "%"
 	}
-	if user != nil && user.Email != "" {
-		addCons["email LIKE ?"] = user.Email + "%"
+	if user != nil && user.UserEmail != "" {
+		addCons["user_email LIKE ?"] = user.UserEmail + "%"
 	}
 	pageBean := us.repo.FindPage(page, pageSize, addCons, nil)
 	return pageBean

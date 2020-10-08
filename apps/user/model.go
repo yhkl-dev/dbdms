@@ -1,46 +1,58 @@
 package user
 
 import (
-	"dbdms/apps/role"
-	helper "dbdms/helpers"
-	regex "dbdms/helpers/regex"
-	"time"
+	"dbdms/db"
+	"dbdms/midware/jwtauth"
+	"dbdms/utils"
+	"dbdms/utils/regex"
+	"fmt"
+	"log"
+	"strings"
 )
 
-// User the user struct
+// User user model struct
 type User struct {
-	ID        int         `gorm:"AUTO_INCREMENT;primary_key"`
-	UserName  string      `gorm:"type:varchar(32);unique_index;not null" json:"username" form:"username" binding:"required"`
-	Password  string      `gorm:"type:varchar(64);not null" json:"password" form:"password" binding:"required"`
-	Phone     string      `gorm:"type:varchar(11);unique" form:"phone" binding:"required"`
-	Email     string      `gorm:"type:varchar(64)" form:"email"`
-	IsDeleted int         `gorm:"type:int;default:0" json:"is_deleted"` // 0: no 1: yes
-	Status    int         `gorm:"column:status"`
-	CreateAt  time.Time   `gorm:"column:create_at;default:current_timestamp"`
-	UpdateAt  time.Time   `gorm:"column:update_at;default:current_timestamp ON update current_timestamp"`
-	DeleteAt  *time.Time  `gorm:"column:delete_at"`
-	LoginTime *time.Time  `gorm:"column:login_time"`
-	RoleList  []int       `gorm:"-" json:"roles" form:"roles"`
-	Roles     []role.Role `gorm:"many2many:user_role_mapping"  `
+	UserID       int    `gorm:"AUTO_INCREMENT;column:user_id;primary_key"`
+	UserName     string `gorm:"type:varchar(32);column:user_name;unique_index;not null" json:"user_name" form:"user_name" binding:"required"`
+	UserPhone    string `gorm:"type:varchar(32);column:user_phone;unique_index;not null" json:"user_phone" form:"user_phone" binding:"required"`
+	UserPassword string `gorm:"type:varchar(64);column:user_password;not null" json:"user_password" form:"user_password" binding:"required"`
+	UserEmail    string `gorm:"type:varchar(64);column:user_email;unique_index" json:"user_email" form:"user_email"`
 }
 
-// Validator user column validator
-func (user *User) Validator() error {
-	if ok, err := regex.MatchLetterNumMinAndMax(user.UserName, 4, 6, "username"); !ok {
+// TableName define table name in database
+func (user *User) TableName() string {
+	return "sys_users"
+}
+
+func (user *User) String() string {
+	return fmt.Sprintf("ID: %d, username: %s, email: %s", user.UserID, user.UserName, user.UserEmail)
+}
+
+func (user *User) validator() error {
+	if ok, err := regex.MatchLetterNumMinAndMax(user.UserName, 4, 6, "user_name"); !ok {
 		return err
 	}
 	//	if ok, err := regex.MatchMediumPassword(user.Password, 6, 13); !ok && user.ID == 0 {
 	//		return err
 	//	}
-	if ok, err := regex.IsPhone(user.Phone); !ok {
+	if ok, err := regex.IsPhone(user.UserPhone); !ok {
 		return err
 	}
-	if ok, err := regex.IsEmail(user.Email); !ok {
+	if ok, err := regex.IsEmail(user.UserEmail); !ok {
 		return err
 	}
 	return nil
 }
 
 func init() {
-	helper.SQL.AutoMigrate(&User{})
+	db.SQL.AutoMigrate(&User{})
+
+	err := utils.LoadTokenConfig("./config/token-config.yml")
+	if err != nil {
+		// utils.ErrorLogger.Errorln("Read Token Config Error: ", err)
+		log.Fatal("Read Token Config Error: ", err)
+	}
+	if len(strings.TrimSpace(utils.GetTokenConfig().SignKey)) > 0 {
+		jwtauth.SetSignKey(utils.GetTokenConfig().SignKey)
+	}
 }
