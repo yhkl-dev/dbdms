@@ -7,7 +7,7 @@ import (
 
 // Role role struct
 type Role struct {
-	RoleID      int    `gorm:"column:role_id;primary_key"`
+	RoleID      int    `gorm:"column:role_id;primary_key" json:"role_id"`
 	RoleName    string `gorm:"type:varchar(32);column:role_name;unique;not null" json:"role_name" form:"role_name" binding:"required"`
 	RolePID     int    `gorm:"column:role_pid" json:"role_pid" form:"role_pid"`
 	RoleComment string `gorm:"type:varchar(32);column:role_comment" json:"role_comment" form:"role_comment" binding:"required"`

@@ -1,6 +1,7 @@
 package jwtauth
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -10,6 +11,7 @@ import (
 // AUTH jwt user auth midware
 func AUTH() gin.HandlerFunc {
 	return func(context *gin.Context) {
+		fmt.Println("JWT AUTH midware")
 		path := context.Request.URL.Path
 		if strings.Contains(path, "swagger") {
 			return

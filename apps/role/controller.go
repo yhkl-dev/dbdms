@@ -77,5 +77,38 @@ func DeleteRoleByID(context *gin.Context) {
 
 // UpdateRole update role info 更新角色信息
 func UpdateRole(context *gin.Context) {
+	id, _ := strconv.Atoi(context.Param("id"))
+	role := &Role{}
+	err := context.Bind(role)
+	if err != nil {
+		context.JSON(http.StatusUnprocessableEntity, &utils.JSONObject{
+			Code:    "0",
+			Message: utils.StatusText(utils.BindModelError),
+			Content: err.Error(),
+		})
+		return
+	}
+	roleService := ServiceInstance(RepoInterface(db.SQL))
+	x := roleService.GetByID(id)
+	if x == nil {
+		context.JSON(http.StatusUnprocessableEntity, &utils.JSONObject{
+			Code:    "0",
+			Message: utils.StatusText(utils.UpdateObjIsNil),
+		})
+		return
+	}
+	role.RoleID = id
 
+	err = roleService.SaveOrUpdate(role)
+	if err == nil {
+		context.JSON(http.StatusOK, utils.JSONObject{
+			Code:    "1",
+			Message: utils.StatusText(utils.SaveStatusOK),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, &utils.JSONObject{
+		Code:    "0",
+		Message: err.Error(),
+	})
 }
