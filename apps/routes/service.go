@@ -2,6 +2,7 @@ package routes
 
 import "dbdms/utils"
 
+// Service route service interface
 type Service interface {
 	ListAllRoutes() []*Routes
 	GetPage(page int, pageSize int, route *Routes) *utils.PageBean
@@ -20,7 +21,7 @@ func ServiceInstance(repo Repo) Service {
 }
 
 func (rs *routeService) ListAllRoutes() []*Routes {
-	routes := rs.repo.FindMore("1=1").([]*Routes)
+	routes := rs.repo.FindMore("1 = ?", 1).([]*Routes)
 	return routes
 }
 

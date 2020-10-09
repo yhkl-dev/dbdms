@@ -7,24 +7,30 @@ import (
 
 // Routes route struct
 type Routes struct {
-	RouteID     int
-	RouteName   string
-	RoutePath   string
-	RouteMethod string
-	RoutePID    int
-	RouteIcon   string
-	isShow      bool
+	RouteID     int    `gorm:"AUTO_INCREMENT;column:route_id;primary_key" json:"route_id" form:"route_id"`
+	RouteName   string `gorm:"type:varchar(32);column:route_name" json:"route_name" form:"route_name"`
+	RoutePath   string `gorm:"type:varchar(32);column:route_path" json:"route_path" form:"route_path"`
+	RouteMethod string `gorm:"type:varchar(32);column:route_method" json:"route_method" form:"route_method"`
+	RoutePID    int    `gorm:"column:route_pid" json:"route_pid" form:"route_pid"`
+	RouteIcon   string `gorm:"type:varchar(32);column:route_icon" json:"route_icon" form:"route_icon"`
+	IsShow      int    `gorm:"column:is_show" json:"is_show" form:"is_show"`
 }
 
+// RoleRouteMapping  role & route mapping struct
 type RoleRouteMapping struct {
-	MappingID int
-	RoleID    int
-	RouteID   int
+	MappingID int `gorm:"column:mapping_id; primary_key"`
+	RoleID    int `gorm:"column:role_id"`
+	RouteID   int `gorm:"column:route_id"`
 }
 
 // TableName define table name in database
 func (r *Routes) TableName() string {
 	return "sys_routes"
+}
+
+// TableName define table name in database
+func (r *RoleRouteMapping) TableName() string {
+	return "role_route_mapping"
 }
 
 func (r *Routes) String() string {

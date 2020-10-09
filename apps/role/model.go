@@ -39,7 +39,7 @@ func (role *Role) Validator() error {
 
 // TableName define table name
 func (urm *UserRoleMapping) TableName() string {
-	return "roles_users_mapping"
+	return "user_role_mapping"
 }
 
 func (role *Role) String() string {
