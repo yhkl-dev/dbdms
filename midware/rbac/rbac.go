@@ -20,6 +20,8 @@ func RBAC() gin.HandlerFunc {
 		access, err := E.Enforce(claims.(*jwtauth.CustomClaims).UserName, context.Request.RequestURI, context.Request.Method)
 
 		if err != nil || !access {
+			userRoles := getUserRoles()
+			fmt.Println(userRoles)
 			// TODO
 			// context.JSON(http.StatusUnprocessableEntity, utils.JSONObject{
 			// 	Code:    "0",

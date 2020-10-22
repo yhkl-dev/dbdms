@@ -25,7 +25,7 @@ func (user *User) TableName() string {
 }
 
 func (user *User) String() string {
-	return fmt.Sprintf("ID: %d, username: %s, email: %s", user.UserID, user.UserName, user.UserEmail)
+	return fmt.Sprintf("<username: %s, email: %s>", user.UserName, user.UserEmail)
 }
 
 func (user *User) validator() error {
