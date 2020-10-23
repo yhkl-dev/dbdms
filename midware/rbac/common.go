@@ -9,7 +9,7 @@ import (
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 )
 
-// E casbin enforcer
+// E Casbin enforcer
 var E *casbin.Enforcer
 
 func init() {

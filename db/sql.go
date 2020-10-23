@@ -2,11 +2,9 @@ package db
 
 import (
 	"dbdms/utils"
-	"log"
-	"os"
-
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"log"
 )
 
 // SQL database Operator
@@ -24,8 +22,6 @@ func init() {
 	if err != nil {
 		// ErrorLogger.Errorln("Connect Database Error: ", err)
 		log.Fatal(err)
-
-		os.Exit(0)
 	}
 	db, err := SQL.DB()
 	if err != nil {

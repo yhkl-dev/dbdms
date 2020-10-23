@@ -48,6 +48,5 @@ func main() {
 		MaxHeaderBytes: serverConfig.MaxHeaderBytes,
 		Handler:        router,
 	}
-	fmt.Println("start")
 	server.ListenAndServe()
 }

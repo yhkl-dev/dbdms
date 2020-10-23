@@ -4,10 +4,9 @@
 ### todo
 + RBAC 
 + JWT
-+ CMDB
 
 
 ### run 
 ```shell
-   $ gowatch
+   $ gowatch / go run main.go
 ```
