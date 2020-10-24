@@ -4,6 +4,7 @@ import (
 	"dbdms/midware/jwtauth"
 	"dbdms/utils"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -14,7 +15,7 @@ import (
 func generateToken(context *gin.Context, user *User) {
 	j := jwtauth.NewJWT()
 	claims := jwtauth.CustomClaims{
-		UserID:    string(user.UserID),
+		UserID:    strconv.Itoa(user.UserID),
 		UserName:  user.UserName,
 		UserPhone: user.UserPhone,
 		StandardClaims: jwt.StandardClaims{

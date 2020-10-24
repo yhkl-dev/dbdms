@@ -1,8 +1,10 @@
 package role
 
 import (
+	"dbdms/apps/user"
 	"dbdms/db"
 	"dbdms/utils"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -111,4 +113,33 @@ func UpdateRole(context *gin.Context) {
 		Code:    "0",
 		Message: err.Error(),
 	})
+}
+
+// Register 修改用户角色
+// @summary 修改用户角色
+// @Tags UserController
+// @Accept json
+func ChangeUserRole(context *gin.Context) {
+	id, _ := strconv.Atoi(context.Param("id"))
+	roleService := ServiceInstance(RepoInterface(db.SQL))
+	userService := user.ServiceInstance(user.RepoInterface(db.SQL))
+	userGot := userService.GetByID(id)
+	fmt.Println(id)
+	if userGot != nil {
+		err := roleService.AddRoleToUser(2, id)
+		fmt.Println("xxx")
+		if err != nil {
+			context.JSON(http.StatusOK, utils.JSONObject{
+				Code:    "1",
+				Message: utils.StatusText(utils.ResourceDoesNotExist),
+				Content: err.Error(),
+			})
+		}
+	} else {
+		context.JSON(http.StatusOK, utils.JSONObject{
+			Code:    "1",
+			Message: utils.StatusText(utils.ResourceDoesNotExist),
+		})
+		return
+	}
 }

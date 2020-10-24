@@ -12,23 +12,35 @@ type Service interface {
 	GetPage(page int, pageSize int, role *Role) *utils.PageBean
 	DeleteRoleByID(id int) error
 	SaveOrUpdate(role *Role) error
+	AddRoleToUser(roleID int, userID int) error
 }
 
 type roleService struct {
 	repo Repo
 }
 
+type roleUserMappingService struct {
+	repo Repo
+}
+
 var roleServiceIns = &roleService{}
+var roleUserMappingServiceIns = &roleUserMappingService{}
 
 // ServiceInstance 获取 roleService 实例
 func ServiceInstance(repo Repo) Service {
 	roleServiceIns.repo = repo
+	roleUserMappingServiceIns.repo = repo
 	return roleServiceIns
 }
 
 func (rs *roleService) ListAllRoles() []*Role {
 	roles := rs.repo.FindMore("1=1").([]*Role)
 	return roles
+}
+
+func (rs *roleService) AddRoleToUser(roleID int, userID int) error {
+	err := rs.repo.AddUserRole(roleID, userID)
+	return err
 }
 
 func (rs *roleService) GetByID(id int) *Role {

@@ -3,9 +3,8 @@ package user
 import (
 	"dbdms/db"
 	"dbdms/utils"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // ListAllUsers 获取用户列表
@@ -66,7 +65,7 @@ func Register(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, &utils.JSONObject{
-		Code:    "0",
+		Code:    "1",
 		Message: err.Error(),
 	})
 }

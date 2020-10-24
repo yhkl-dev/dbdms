@@ -3,13 +3,13 @@ package role
 import (
 	"dbdms/apps"
 	"dbdms/utils"
-
 	"gorm.io/gorm"
 )
 
 // Repo role interface inplemented from common interface
 type Repo interface {
 	apps.RepositoryInterface
+	AddUserRole(roleId int, userID int) error
 }
 
 type roleRepo struct {
@@ -37,7 +37,12 @@ func (urm *userRoleMappingRepo) Delete(roleID int) error {
 
 func (rp *roleRepo) Insert(m interface{}) error {
 	err := rp.db.Create(m).Error
+	return err
+}
 
+func (rp *roleRepo) AddUserRole(roleId int, userID int) error {
+	mapping := &UserRoleMapping{RoleID: roleId, UserID: userID}
+	err := userRoleRepoInstance.db.Create(mapping).Error
 	return err
 }
 
