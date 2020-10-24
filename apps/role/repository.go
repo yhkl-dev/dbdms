@@ -3,7 +3,7 @@ package role
 import (
 	"dbdms/apps"
 	"dbdms/utils"
-	"fmt"
+	"errors"
 	"gorm.io/gorm"
 )
 
@@ -52,12 +52,12 @@ func (rp *roleRepo) ChangeUserRole(roleID int, userID int) error {
 	urm := &UserRoleMapping{}
 	err := userRoleRepoInstance.db.Where("user_id = ?", userID).Find(&urm).Error
 	if err != nil || urm.MappingID == 0 {
-		return err
+		return errors.New(utils.StatusText(utils.SaveObjIsNil))
 	}
 	role := &Role{}
 	err = rp.db.Where("role_id = ?", roleID).Find(role).Error
 	if err != nil || role.RoleID == 0 {
-		return fmt.Errorf("Role Does not exist")
+		return errors.New(utils.StatusText(utils.SaveObjIsNil))
 	}
 	urm.RoleID = role.RoleID
 	err = userRoleRepoInstance.db.Save(urm).Error

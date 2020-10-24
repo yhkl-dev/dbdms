@@ -25,8 +25,7 @@ func RepoInterface(db *gorm.DB) Repo {
 }
 
 func (ur *userRepo) Insert(m interface{}) error {
-	err := ur.db.Create(m).Error
-	return err
+	return ur.db.Create(m).Error
 }
 
 func (ur *userRepo) Update(m interface{}) error {

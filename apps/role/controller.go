@@ -4,7 +4,6 @@ import (
 	"dbdms/apps/user"
 	"dbdms/db"
 	"dbdms/utils"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -121,7 +120,6 @@ func UpdateRole(context *gin.Context) {
 // @Accept json
 func ChangeUserRole(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
-	fmt.Println("id>>>", id)
 	role := &changeUserRole{}
 	err := context.Bind(role)
 	if err != nil {
@@ -135,8 +133,6 @@ func ChangeUserRole(context *gin.Context) {
 	roleService := ServiceInstance(RepoInterface(db.SQL))
 	userService := user.ServiceInstance(user.RepoInterface(db.SQL))
 	userGot := userService.GetByID(id)
-	fmt.Println(id)
-	fmt.Println(role)
 	if userGot != nil {
 		err := roleService.ChangeRoleToUser(role.RoleId, id)
 		if err != nil {
@@ -145,11 +141,13 @@ func ChangeUserRole(context *gin.Context) {
 				Message: utils.StatusText(utils.ResourceDoesNotExist),
 				Content: err.Error(),
 			})
+			return
 		}
 		context.JSON(http.StatusOK, utils.JSONObject{
 			Code:    "1",
 			Message: utils.StatusText(utils.SaveStatusOK),
 		})
+		return
 	} else {
 		context.JSON(http.StatusOK, utils.JSONObject{
 			Code:    "1",
