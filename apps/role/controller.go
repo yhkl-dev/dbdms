@@ -121,6 +121,7 @@ func UpdateRole(context *gin.Context) {
 // @Accept json
 func ChangeUserRole(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
+	fmt.Println("id>>>", id)
 	role := &changeUserRole{}
 	err := context.Bind(role)
 	if err != nil {
@@ -145,6 +146,10 @@ func ChangeUserRole(context *gin.Context) {
 				Content: err.Error(),
 			})
 		}
+		context.JSON(http.StatusOK, utils.JSONObject{
+			Code:    "1",
+			Message: utils.StatusText(utils.SaveStatusOK),
+		})
 	} else {
 		context.JSON(http.StatusOK, utils.JSONObject{
 			Code:    "1",
