@@ -6,10 +6,11 @@ import (
 	"gorm.io/gorm"
 )
 
-// Repo role interface inplemented from common interface
+// Repo role interface implement  from common interface
 type Repo interface {
 	apps.RepositoryInterface
-	AddUserRole(roleId int, userID int) error
+	//AddUserRole(roleID int, userID int) error
+	ChangeUserRole(roleID int, userID int) error
 }
 
 type roleRepo struct {
@@ -40,9 +41,14 @@ func (rp *roleRepo) Insert(m interface{}) error {
 	return err
 }
 
-func (rp *roleRepo) AddUserRole(roleId int, userID int) error {
-	mapping := &UserRoleMapping{RoleID: roleId, UserID: userID}
+func (rp *roleRepo) AddUserRole(roleID int, userID int) error {
+	mapping := &UserRoleMapping{RoleID: roleID, UserID: userID}
 	err := userRoleRepoInstance.db.Create(mapping).Error
+	return err
+}
+
+func (rp *roleRepo) ChangeUserRole(roleID int, userID int) error {
+	err := userRoleRepoInstance.db.Where("user_id = ?", userID).Update("role_id = ?", roleID).Error
 	return err
 }
 

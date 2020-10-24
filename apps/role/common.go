@@ -5,3 +5,7 @@ type roleQueryParams struct {
 	Page     int    `json:"page" form:"page"`
 	PageSize int    `json:"page_size" form:"page_size"`
 }
+
+type changeUserRole struct {
+	RoleId int `json:"role_id" form:"role_id"`
+}

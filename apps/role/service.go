@@ -12,7 +12,7 @@ type Service interface {
 	GetPage(page int, pageSize int, role *Role) *utils.PageBean
 	DeleteRoleByID(id int) error
 	SaveOrUpdate(role *Role) error
-	AddRoleToUser(roleID int, userID int) error
+	ChangeRoleToUser(roleID int, userID int) error
 }
 
 type roleService struct {
@@ -38,8 +38,8 @@ func (rs *roleService) ListAllRoles() []*Role {
 	return roles
 }
 
-func (rs *roleService) AddRoleToUser(roleID int, userID int) error {
-	err := rs.repo.AddUserRole(roleID, userID)
+func (rs *roleService) ChangeRoleToUser(roleID int, userID int) error {
+	err := rs.repo.ChangeUserRole(roleID, userID)
 	return err
 }
 
