@@ -103,7 +103,7 @@ func (us *resourceService) GetResourcePage(page int, pageSize int, resource *Res
 }
 
 func (us *resourceTypeService) GetResourceTypes() []*ResourceType {
-	resoruceTypes := us.repo.FindMore("1=1").([]*ResourceType)
+	resoruceTypes := us.repo.FindMore("1 = 1").([]*ResourceType)
 	return resoruceTypes
 }
 
