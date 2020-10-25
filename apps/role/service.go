@@ -1,6 +1,7 @@
 package role
 
 import (
+	"dbdms/midware/rbac"
 	"dbdms/utils"
 	"errors"
 )
@@ -40,6 +41,7 @@ func (rs *roleService) ListAllRoles() []*Role {
 
 func (rs *roleService) ChangeRoleToUser(roleID int, userID int) error {
 	err := rs.repo.ChangeUserRole(roleID, userID)
+	rbac.ReInit()
 	return err
 }
 

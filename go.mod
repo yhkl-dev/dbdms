@@ -22,7 +22,7 @@ require (
 	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0 // indirect
 	golang.org/x/net v0.0.0-20201006153459-a7d1128ccaa0 // indirect
 	golang.org/x/sys v0.0.0-20201006155630-ac719f4daadf // indirect
-	golang.org/x/tools v0.0.0-20201007032633-0806396f153e // indirect
+	golang.org/x/tools v0.0.0-20201007032633-0806396f153e
 	google.golang.org/protobuf v1.25.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 	gorm.io/driver/mysql v1.0.2

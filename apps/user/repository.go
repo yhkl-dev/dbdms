@@ -2,8 +2,9 @@ package user
 
 import (
 	"dbdms/apps"
+	"dbdms/midware/rbac"
 	"dbdms/utils"
-
+	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -25,7 +26,20 @@ func RepoInterface(db *gorm.DB) Repo {
 }
 
 func (ur *userRepo) Insert(m interface{}) error {
-	return ur.db.Create(m).Error
+	err := ur.db.Create(m).Error
+	if err != nil {
+		return err
+	}
+
+	if m.(*User).UserID != 0 {
+		ur.db.Exec(fmt.Sprintf("insert into user_role_mapping (role_id, user_id) values (1, %d)", m.(*User).UserID))
+		//_, err := rbac.E.AddRoleForUser(m.(*User).UserName, "游客")
+		//if err != nil {
+		//	log.Fatal(err)
+		//}
+		rbac.ReInit()
+	}
+	return nil
 }
 
 func (ur *userRepo) Update(m interface{}) error {

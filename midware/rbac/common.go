@@ -3,6 +3,7 @@ package rbac
 import (
 	"dbdms/db"
 	"log"
+	"fmt"
 
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
@@ -26,7 +27,11 @@ func init() {
 		log.Fatal(err)
 	}
 	E = e
+	ReInit()
+}
 
+func ReInit() {
+	fmt.Println("reinit rbac")
 	userRoles := getUserRoles()
 	for _, ur := range userRoles {
 		_, err := E.AddRoleForUser(ur["user_name"].(string), ur["role_name"].(string))
