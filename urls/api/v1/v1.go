@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"dbdms/apps/resources"
 	"dbdms/apps/role"
 	"dbdms/apps/routes"
 	"dbdms/apps/user"
@@ -14,4 +15,5 @@ func RegisterRouter(router *gin.RouterGroup) {
 	user.RegisterRouter(v1.Group("/users"))
 	role.RegisterRouter(v1.Group("/roles"))
 	routes.RegisterRouter(v1.Group("/routes"))
+	resources.RegisterRouter(v1.Group("/resources"))
 }
