@@ -128,3 +128,98 @@ func DeleteResourceByID(context *gin.Context) {
 	})
 }
 
+func ListAllResourceTypes(context *gin.Context) {
+	query := resourceTypeQueryParams{}
+	err := context.BindQuery(&query)
+	if err != nil {
+		context.JSON(http.StatusOK, utils.JSONObject{
+			Code:    "0",
+			Message: utils.StatusText(utils.ParamParseError),
+			Content: err.Error(),
+		})
+	}
+	resourceTypeService := ResourceTypeServiceInstance(TypeRepoInterface(db.SQL))
+	pageBean := resourceTypeService.GetResourceTypePage(query.Page, query.PageSize, &ResourceType{ResourceTypeName: query.ResourceTypeName})
+	context.JSON(http.StatusOK, utils.JSONObject{
+		Code:    "1",
+		Content: pageBean,
+	})
+	return
+}
+
+// CreateResourceType
+func CreateResourceType(context *gin.Context) {
+	resourceType := &ResourceType{}
+	err := context.Bind(resourceType)
+	if err != nil {
+		context.JSON(http.StatusUnprocessableEntity, &utils.JSONObject{
+			Code:    "0",
+			Message: utils.StatusText(utils.BindModelError),
+			Content: err.Error(),
+		})
+		return
+	}
+	resourceTypeService := ResourceTypeServiceInstance(TypeRepoInterface(db.SQL))
+	err = resourceTypeService.SaveOrUpdateResourceType(resourceType)
+	if err == nil {
+		context.JSON(http.StatusOK, utils.JSONObject{
+			Code:    "1",
+			Message: utils.StatusText(utils.SaveStatusOK),
+		})
+		return
+	}
+	context.JSON(http.StatusBadRequest, &utils.JSONObject{
+		Code:    "0",
+		Message: err.Error(),
+	})
+}
+
+// UpdateResourceType
+func UpdateResourceType(context *gin.Context) {
+	id, _ := strconv.Atoi(context.Param("id"))
+	resourceType := &ResourceType{}
+
+	resourceTypeService := ResourceTypeServiceInstance(TypeRepoInterface(db.SQL))
+	resourceTypeQuery := resourceTypeService.GetResourceTypeByID(id)
+	if resourceTypeQuery != nil {
+		resourceType.ResourceTypeID = resourceTypeQuery.ResourceTypeID
+	}
+	err := resourceTypeService.SaveOrUpdateResourceType(resourceType)
+	if err == nil {
+		context.JSON(http.StatusOK, utils.JSONObject{
+			Code:    "1",
+			Message: utils.StatusText(utils.SaveStatusOK),
+		})
+		return
+	}
+	context.JSON(http.StatusBadRequest, &utils.JSONObject{
+		Code:    "0",
+		Message: err.Error(),
+	})
+}
+
+func DeleteResourceTypeByID(context *gin.Context) {
+	id, _ := strconv.Atoi(context.Param("id"))
+	resourceTypeService := ResourceTypeServiceInstance(TypeRepoInterface(db.SQL))
+	resourceType := resourceTypeService.GetResourceTypeByID(id)
+	if resourceType == nil || resourceType.ResourceTypeID == 0 {
+		context.JSON(http.StatusBadRequest, &utils.JSONObject{
+			Code:    "1",
+			Message: utils.StatusText(utils.ResourceDoesNotExist),
+		})
+		return
+	}
+	err := resourceTypeService.DeleteResourceTypeByID(id)
+	if err != nil {
+		context.JSON(http.StatusOK, utils.JSONObject{
+			Code:    "0",
+			Message: utils.StatusText(utils.DeleteStatusErr),
+			Content: err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusOK, utils.JSONObject{
+		Code:    "1",
+		Message: utils.StatusText(utils.DeleteStatusOK),
+	})
+}

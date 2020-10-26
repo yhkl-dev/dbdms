@@ -6,3 +6,9 @@ type resourceQueryParams struct {
 	Page           int    `json:"page" form:"page"`
 	PageSize       int    `json:"page_size" form:"page_size"`
 }
+
+type resourceTypeQueryParams struct {
+	ResourceTypeName string `json:"resource_name" form:"resource_name"`
+	Page             int    `json:"page" form:"page"`
+	PageSize         int    `json:"page_size" form:"page_size"`
+}

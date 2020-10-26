@@ -9,4 +9,13 @@ func RegisterRouter(router *gin.RouterGroup) {
 	router.POST("", CreateResource)
 	router.PUT("/:id", UpdateResource)
 	router.DELETE("/:id", DeleteResourceByID)
+
+}
+
+// RegisterResourceTypeRouter resource type router register
+func RegisterResourceTypeRouter(router *gin.RouterGroup) {
+	router.GET("", ListAllResourceTypes)
+	router.POST("", CreateResourceType)
+	router.PUT("/:id", UpdateResourceType)
+	router.DELETE("/:id", DeleteResourceTypeByID)
 }

@@ -16,4 +16,5 @@ func RegisterRouter(router *gin.RouterGroup) {
 	role.RegisterRouter(v1.Group("/roles"))
 	routes.RegisterRouter(v1.Group("/routes"))
 	resources.RegisterRouter(v1.Group("/resources"))
+	resources.RegisterResourceTypeRouter(v1.Group("/resource_types"))
 }
