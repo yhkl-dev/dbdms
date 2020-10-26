@@ -2,11 +2,18 @@
     database document management system
 
 ### todo
-+ RBAC 
-+ JWT
++ rbac role based access control 
++ jwt
++ database document
++ cmdb
 
 
 ### run 
 ```shell
    $ gowatch / go run main.go
 ```
+
+### todo
+   exec scripts
+   dingding robot config
+   
