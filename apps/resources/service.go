@@ -81,7 +81,7 @@ func (us *resourceService) DeleteResourceByID(id int) error {
 	if resource == nil || resource.ResourceID == 0 {
 		return errors.New(utils.StatusText(utils.DeleteObjIsNil))
 	}
-	return us.repo.Update(resource)
+	return us.repo.Delete(resource)
 }
 
 func (us *resourceService) GetResourcePage(page int, pageSize int, resource *Resource) *utils.PageBean {
@@ -103,8 +103,8 @@ func (us *resourceService) GetResourcePage(page int, pageSize int, resource *Res
 }
 
 func (us *resourceTypeService) GetResourceTypes() []*ResourceType {
-	resoruceTypes := us.repo.FindMore("1 = 1").([]*ResourceType)
-	return resoruceTypes
+	resourceTypes := us.repo.FindMore("1 = 1").([]*ResourceType)
+	return resourceTypes
 }
 
 func (us *resourceTypeService) GetResourceTypeByID(id int) *ResourceType {

@@ -67,7 +67,7 @@ func (rp *resourceRepo) FindPage(page int, pageSize int, andCons map[string]inte
 			rp.db = rp.db.Where(k, v)
 		}
 	}
-	rp.db.Limit(pageSize).Offset((page - 1) * pageSize).Find(&rows).Count(&total)
+	rp.db.Preload("ResourceType").Limit(pageSize).Offset((page - 1) * pageSize).Find(&rows).Count(&total)
 	return &utils.PageBean{Page: page, PageSize: pageSize, Total: total, Rows: rows}
 }
 
@@ -114,7 +114,7 @@ func (rp *resourceTypeRepo) Delete(m interface{}) error {
 
 func (rp *resourceTypeRepo) FindMore(condition string, params ...interface{}) interface{} {
 	resourceType := make([]*ResourceType, 0)
-	rp.db.Where(condition, params).Find(&resourceType)
+	rp.db.Where(condition, params).Preload("resource_type").Find(&resourceType)
 	return resourceType
 }
 
