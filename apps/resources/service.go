@@ -4,6 +4,7 @@ import (
 	"dbdms/utils"
 	"encoding/base64"
 	"errors"
+	"fmt"
 )
 
 // Service resource service instance
@@ -76,11 +77,41 @@ func (us *resourceService) SaveOrUpdateResource(resource *Resource) error {
 			return err
 		}
 		resource.ResourcePassword = base64.StdEncoding.EncodeToString(encryptBytes)
+
+		bytesPass, err := base64.StdEncoding.DecodeString(resource.ResourcePassword)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		tpass, err := utils.AesDecrypt(bytesPass, []byte(resource.ResourcePassSalt))
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Printf("解密后:%s\n", tpass)
+
 		return us.repo.Insert(resource)
 	}
 	persist := us.GetResourceByID(resource.ResourceID)
 	if persist == nil || persist.ResourceID == 0 {
 		return errors.New(utils.StatusText(utils.UpdateObjIsNil))
+	}
+	if persist.ResourcePassword != resource.ResourcePassword {
+		encryptBytes, err :=  utils.AesEncrypt([]byte(resource.ResourcePassword), []byte(resource.ResourcePassSalt))
+		if err != nil {
+			return err
+		}
+		resource.ResourcePassword = base64.StdEncoding.EncodeToString(encryptBytes)
+
+		bytesPass, err := base64.StdEncoding.DecodeString(resource.ResourcePassword)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		tpass, err := utils.AesDecrypt(bytesPass, []byte(resource.ResourcePassSalt))
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Printf("更新解密后:%s\n", tpass)
 	}
 	return us.repo.Update(resource)
 }
