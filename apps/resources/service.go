@@ -2,6 +2,7 @@ package resources
 
 import (
 	"dbdms/utils"
+	"encoding/base64"
 	"errors"
 )
 
@@ -67,6 +68,14 @@ func (us *resourceService) SaveOrUpdateResource(resource *Resource) error {
 		return errors.New(utils.StatusText(utils.SaveObjIsNil))
 	}
 	if resource.ResourceID == 0 {
+		salt := utils.GetRandomString(16)
+		resource.ResourcePassSalt = string(salt[:])
+		encryptBytes, err :=  utils.AesEncrypt([]byte(resource.ResourcePassword), salt)
+
+		if err != nil {
+			return err
+		}
+		resource.ResourcePassword = base64.StdEncoding.EncodeToString(encryptBytes)
 		return us.repo.Insert(resource)
 	}
 	persist := us.GetResourceByID(resource.ResourceID)

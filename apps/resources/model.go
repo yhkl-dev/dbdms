@@ -10,6 +10,7 @@ type Resource struct {
 	ResourceUser        string `gorm:"type:varchar(32);column:resource_user" json:"resource_user" form:"resource_user" binding:"required"`
 	ResourcePassword    string `gorm:"type:varchar(64);column:resource_password" json:"resource_password" form:"resource_password" binding:"required"`
 	ResourcePort        int    `gorm:"column:resource_port" json:"resource_port" form:"resource_port" binding:"required"`
+	ResourcePassSalt    string `gorm:"type:varchar(32);column:resource_pass_salt" json:"resource_pass_salt" form:"resource_pass_salt"`
 	ResourceDescription string `gorm:"type:varchar(32);column:resource_description" json:"resource_description" form:"resource_description" binding:"required"`
 	ResourceTypeID      int
 	ResourceType        ResourceType `gorm:"foreignKey:ResourceTypeID" json:"resource_type" form:"resource_port" binding:"required"`
