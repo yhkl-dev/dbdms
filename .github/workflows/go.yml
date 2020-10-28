@@ -45,3 +45,10 @@ jobs:
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         TARGET: ${{ secrets.REMOTE_TARGET }}
+      - run:
+          - name: Start project
+            run: |
+              ssh $REMOTE_HOST ps -ef |grep dbdms | grep -v grep | awk '{print $2}' | xargs -I {} kill -9 {} &&
+              ssh $REMOTE_HOST nohup /data/dbdms/dbdms && echo "success"
+
+
