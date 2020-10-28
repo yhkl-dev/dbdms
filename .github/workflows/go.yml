@@ -16,8 +16,8 @@ jobs:
         uses: steebchen/kubectl@master
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        run: |
-          kubectl get nodes
+#        run: |
+#          kubectl get nodes
 
 #  build:
 #    name: Build
