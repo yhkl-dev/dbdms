@@ -34,3 +34,6 @@ jobs:
 
     - name: Test
       run: go test -v .
+
+    - name: k8s-actions/golang
+      uses: k8s-actions/golang@v0.1
