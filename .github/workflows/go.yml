@@ -48,14 +48,13 @@ jobs:
 
     - name: Start project
       run: |
+        sudo apt-get install sshpass -y &&
         echo $REMOTE_HOST &&
-        ssh $REMOTE_HOST ps -ef |grep dbdms | grep -v grep | awk '{print $2}' | xargs -I {} kill -9 {} &&
-        ssh $REMOTE_HOST nohup /data/dbdms/dbdms && echo "success"
+        sshpass -p '$REMOTE_PASS' ssh $REMOTE_USER@$REMOTE_HOST ps -ef |grep dbdms | grep -v grep | awk '{print $2}' | xargs -I {} kill -9 {} &&
+        sshpass -p '$REMOTE_PASS' ssh $REMOTE_USER@$REMOTE_HOST nohup /data/dbdms/dbdms &&
+        echo "success"
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-        ARGS: "-rltgoDzvO --delete"
-        SOURCE: "."
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_PASS: ${{ secrets.REMOTE_PASS }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
-        TARGET: ${{ secrets.REMOTE_TARGET }}
 
