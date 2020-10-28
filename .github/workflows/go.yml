@@ -11,7 +11,7 @@ jobs:
     name: deploy to cluster
     runs-on: ubuntu-latest
     steps:
-#      - uses: actions/checkout@master
+      - uses: actions/checkout@master
       - name: deploy to cluster
         uses: steebchen/kubectl@master
         env:
@@ -19,32 +19,32 @@ jobs:
         run: |
           kubectl get nodes
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v2
-      with:
-        go-version: ^1.13
-
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
-
-    - name: Get dependencies
-      run: |
-        go get -v -t -d ./...
-        if [ -f Gopkg.toml ]; then
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-        fi
-
-    - name: Build
-      run: go build -v .
-
-    - name: Test
-      run: go test -v .
-
-    - name: k8s-actions/golang
-      uses: k8s-actions/golang@v0.1
+#  build:
+#    name: Build
+#    runs-on: ubuntu-latest
+#    steps:
+#
+#    - name: Set up Go 1.x
+#      uses: actions/setup-go@v2
+#      with:
+#        go-version: ^1.13
+#
+#    - name: Check out code into the Go module directory
+#      uses: actions/checkout@v2
+#
+#    - name: Get dependencies
+#      run: |
+#        go get -v -t -d ./...
+#        if [ -f Gopkg.toml ]; then
+#            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+#            dep ensure
+#        fi
+#
+#    - name: Build
+#      run: go build -v .
+#
+#    - name: Test
+#      run: go test -v .
+#
+#    - name: k8s-actions/golang
+#      uses: k8s-actions/golang@v0.1
