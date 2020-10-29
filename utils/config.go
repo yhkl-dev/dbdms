@@ -11,7 +11,7 @@ type config struct {
 	Datasource *Datasource
 	Token      *TokenConfig
 	Server     *ServerConfig
-	// Gin        *ginConfig
+	Gin        *ginConfig
 }
 
 type TokenConfig struct {
@@ -19,6 +19,12 @@ type TokenConfig struct {
 	SignKey     string `yaml:"sign-key"`
 	ActiveTime  int64  `yaml:"active-time"`
 	ExpiredTime int64  `yaml:"expired-time"`
+}
+
+type ginConfig struct {
+	RunMode                string `yaml:"run-mode"`
+	HandleMethodNotAllowed bool   `yaml:"handle-method-not-allowed"`
+	MaxMultipartMememory   int64  `yaml:"max-multipart-memory"`
 }
 
 // ServerConfig server config
@@ -43,6 +49,11 @@ type Datasource struct {
 }
 
 var configuration *config
+
+// GetGinConfig get gin config
+func GetGinConfig() (ginconfig *ginConfig) {
+	return configuration.Gin
+}
 
 // GetDatasource get data source
 func GetDatasource() *Datasource {

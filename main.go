@@ -4,11 +4,11 @@ import (
 	"dbdms/urls"
 	"dbdms/utils"
 	"fmt"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 func init() {
@@ -26,16 +26,17 @@ func main() {
 
 	// router.Use(system.Logger(helper.AccessLogger), gin.Recovery())
 	router.Use(gin.Recovery())
-	// router.Use(cors.New(cors.Config{
-	// 	AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-	// 	AllowHeaders:     []string{"Origin", "Content-length", "Content-Type", "ACCESS_TOKEN"},
-	// 	AllowCredentials: false,
-	// 	AllowAllOrigins:  true,
-	// 	MaxAge:           12 * time.Hour,
-	// }))
-	// router.HandleMethodNotAllowed = ginConfig.HandleMethodNotAllowed
+	router.Use(cors.New(cors.Config{
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-length", "Content-Type", "ACCESS_TOKEN"},
+		AllowCredentials: false,
+		AllowAllOrigins:  true,
+		MaxAge:           12 * time.Hour,
+	}))
+	ginConfig := utils.GetGinConfig()
+	router.HandleMethodNotAllowed = ginConfig.HandleMethodNotAllowed
 	router.Static("/page", "view")
-	// router.MaxMultipartMemory = ginConfig.MaxMultipartMememory
+	router.MaxMultipartMemory = ginConfig.MaxMultipartMememory
 	urls.RegisterAPIRoutes(router)
 	urls.RegisterOpenRoutes(router)
 	// routers.RegisterAppRoutes(router)
@@ -48,5 +49,5 @@ func main() {
 		MaxHeaderBytes: serverConfig.MaxHeaderBytes,
 		Handler:        router,
 	}
-	server.ListenAndServe()
+	_ = server.ListenAndServe()
 }
