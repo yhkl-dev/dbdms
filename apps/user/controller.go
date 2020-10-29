@@ -89,7 +89,7 @@ func Login(context *gin.Context) {
 		} else {
 			context.JSON(http.StatusOK, utils.JSONObject{
 				Code:    "0",
-				Content: "test",
+				Content: "",
 				Message: utils.StatusText(utils.LoginStatusError),
 			})
 		}
