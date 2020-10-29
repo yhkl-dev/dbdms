@@ -48,8 +48,7 @@ jobs:
 
     - name: Start project
       run: |
-        sshpass -p $REMOTE_PASS ssh $REMOTE_USER@$REMOTE_HOST ps -ef |grep dbdms | grep -v grep | awk '{print $2}' | xargs -I {} kill -9 {}
-        sshpass -p $REMOTE_PASS ssh $REMOTE_USER@$REMOTE_HOST supervisorctl restart dbdms  
+        sshpass -p $REMOTE_PASS ssh $REMOTE_USER@$REMOTE_HOST supervisorctl restart dbdms
         echo "success"
       env:
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
