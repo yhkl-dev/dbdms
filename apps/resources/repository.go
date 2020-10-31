@@ -47,7 +47,7 @@ func (rp *resourceRepo) FindMore(condition string, params ...interface{}) interf
 
 func (rp *resourceRepo) FindOne(id int) interface{} {
 	var resource Resource
-	err := rp.db.Where("resource_id = ?", id).First(&resource).Error
+	err := rp.db.Preload("ResourceType").Where("resource_id = ?", id).First(&resource).Error
 	if resource.ResourceID == 0 || err != nil {
 		return nil
 	}

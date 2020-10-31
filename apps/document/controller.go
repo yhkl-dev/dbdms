@@ -3,10 +3,14 @@ package document
 import (
 	"dbdms/apps/resources"
 	"dbdms/db"
+	"dbdms/tbls/command"
 	"dbdms/utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
+
 // ListAllResourcesDocuments
 func ListAllResourcesDocuments(context *gin.Context) {
 	query := documentQueryParams{}
@@ -41,10 +45,23 @@ func ListAllResourcesDocuments(context *gin.Context) {
 	}
 	pageBean := documentService.GetDocumentPage(query.Page,
 		query.PageSize,
-		&DatabaseDocument{DocumentDBName: query.DocumentDBName, DocumentTableName: query.DocumentTableName })
+		&DatabaseDocument{DocumentDBName: query.DocumentDBName, DocumentTableName: query.DocumentTableName})
 	context.JSON(http.StatusOK, utils.JSONObject{
 		Code:    "1",
 		Content: pageBean,
 	})
+	return
+}
+
+// GenerateDocument
+func GenerateDocument(context *gin.Context) {
+	id, _ := strconv.Atoi(context.Param("id"))
+	resourceService := resources.ResourceServiceInstance(resources.RepoInterface(db.SQL))
+	DSN := resourceService.GenerateDSN(id)
+	fmt.Println("DSN",  DSN)
+	command.Doc(DSN)
+	fmt.Println("DSNE")
+
+
 	return
 }

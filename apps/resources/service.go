@@ -15,6 +15,7 @@ type ResourceService interface {
 	DeleteResourceByID(id int) error
 	GetResourcePage(page int, pageSize int, resource *Resource) *utils.PageBean
 	SaveOrUpdateResource(resource *Resource) error
+	GenerateDSN(id int) string
 }
 
 // ResourceTypeService resource type service instance
@@ -135,6 +136,29 @@ func (us *resourceService) DeleteResourceByID(id int) error {
 		return errors.New(utils.StatusText(utils.DeleteObjIsNil))
 	}
 	return us.repo.Delete(resource)
+}
+
+func(us *resourceService) GenerateDSN(id int) string {
+	r := us.GetResourceByID(id)
+	if r == nil {
+		return ""
+	}
+	bytesPass, err := base64.StdEncoding.DecodeString(r.ResourcePassword)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	tpass, err := utils.AesDecrypt(bytesPass, []byte(r.ResourcePassSalt))
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("解密后:%s\n", tpass)
+	fmt.Println("ResourceTypeName", r.ResourceType.ResourceTypeName)
+	if r.ResourceType.ResourceTypeName == "postgres" {
+		// postgres://dbuser:dbpass@hostname:5432/dbname
+		return fmt.Sprintf("postgres://%s:%s@%s:%d/%s", r.ResourceUser, tpass, r.ResourceHostIP, r.ResourcePort, r.ResourceDatabaseName)
+	}
+	return ""
 }
 
 func (us *resourceService) GetResourcePage(page int, pageSize int, resource *Resource) *utils.PageBean {

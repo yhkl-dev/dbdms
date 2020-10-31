@@ -2,10 +2,10 @@ package command
 
 import (
 	"dbdms/tbls/config"
-	"dbdms/tbls/schema"
+	"dbdms/tbls/datasource"
 	"dbdms/tbls/output/gviz"
 	"dbdms/tbls/output/md"
-	"dbdms/tbls/datasource"
+	"dbdms/tbls/schema"
 	"fmt"
 	"github.com/pkg/errors"
 	"log"
@@ -13,13 +13,41 @@ import (
 	"path/filepath"
 )
 
-func Doc(args []string) {
+func loadDocArgs(args []string) ([]config.Option, error) {
+	options := []config.Option{}
+	if len(args) > 2 {
+		return options, errors.WithStack(errors.New("too many arguments"))
+	}
+	if len(args) == 2 {
+		options = append(options, config.DSNURL(args[0]))
+		options = append(options, config.DocPath(args[1]))
+	}
+	if len(args) == 1 {
+		options = append(options, config.DSNURL(args[0]))
+	}
+	return options, nil
+}
+
+func Doc(dsn string) {
+	fmt.Println("11111")
 	c, err := config.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	configPath := "./docs"
+	args := []string{dsn}
+	options, err := loadDocArgs(args)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = c.Load(configPath, options...)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	s, err := datasource.Analyze(c.DSN)
+	fmt.Println(s)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +64,7 @@ func Doc(args []string) {
 	}
 }
 
-func withDot(s *schema.Schema, c *config.Config, force bool) (e error) {
+func withDot(s *schema.Schema, c *config.Config) (e error) {
 	erFormat := c.ER.Format
 	outputPath := c.DocPath
 	fullPath, err := filepath.Abs(outputPath)
@@ -78,19 +106,4 @@ func withDot(s *schema.Schema, c *config.Config, force bool) (e error) {
 	}
 
 	return nil
-}
-
-func loadDocArgs(args []string) ([]config.Option, error) {
-	options := []config.Option{}
-	if len(args) > 2 {
-		return options, errors.WithStack(errors.New("too many arguments"))
-	}
-	if len(args) == 2 {
-		options = append(options, config.DSNURL(args[0]))
-		options = append(options, config.DocPath(args[1]))
-	}
-	if len(args) == 1 {
-		options = append(options, config.DSNURL(args[0]))
-	}
-	return options, nil
 }
