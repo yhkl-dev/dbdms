@@ -11,6 +11,7 @@ import (
 type ResourceService interface {
 	GetResources() []*Resource
 	GetResourceByID(id int) *Resource
+	GetResourceByName(name string) *Resource
 	DeleteResourceByID(id int) error
 	GetResourcePage(page int, pageSize int, resource *Resource) *utils.PageBean
 	SaveOrUpdateResource(resource *Resource) error
@@ -52,6 +53,17 @@ func ResourceTypeServiceInstance(repo Repo) ResourceTypeService {
 func (us *resourceService) GetResources() []*Resource {
 	resources := us.repo.FindMore("1=1").([]*Resource)
 	return resources
+}
+
+func (us *resourceService) GetResourceByName(name string) *Resource {
+	if name == "" {
+		return nil
+	}
+	resource := us.repo.FindByName(name)
+	if resource != nil {
+		return resource.(*Resource)
+	}
+	return nil
 }
 
 func (us *resourceService) GetResourceByID(id int) *Resource {

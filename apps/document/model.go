@@ -1,6 +1,9 @@
 package document
 
-import "dbdms/apps/resources"
+import (
+	"dbdms/apps/resources"
+	"dbdms/db"
+)
 
 // DatabaseDocument database  struct
 type DatabaseDocument struct {
@@ -8,7 +11,8 @@ type DatabaseDocument struct {
 	DocumentUUID      string `gorm:"type:varchar(32);column:document_uuid" json:"document_uuid" form:"document_uuid"`
 	DocumentDBName    string `gorm:"type:varchar(32);column:document_db_name" json:"document_db_name" form:"document_db_name"`
 	DocumentTableName string `gorm:"type:varchar(32);column:document_table_name" json:"document_table_name" form:"document_table_name"`
-	Created           int64  `gorm:"autoCreateTime"`
+	DocumentContent   string `gorm:"type:text;column:document_content" json:"document_content" form:"document_content"`
+	Created           int64  `gorm:"autoCreateTime;column:create_at"`
 	ResourceID        int
 	Resource          resources.Resource `gorm:"foreignKey:ResourceID" json:"resource_id" form:"resource_id" binding:"required"`
 }
@@ -16,4 +20,8 @@ type DatabaseDocument struct {
 // TableName define table name
 func (r *DatabaseDocument) TableName() string {
 	return "database_document"
+}
+
+func init() {
+	_ = db.SQL.AutoMigrate(&DatabaseDocument{})
 }
