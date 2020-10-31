@@ -4,7 +4,6 @@ import (
 	"dbdms/apps/resources"
 	"dbdms/db"
 	"dbdms/utils"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -12,16 +11,13 @@ import (
 func ListAllResourcesDocuments(context *gin.Context) {
 	query := documentQueryParams{}
 	err := context.BindQuery(&query)
-	fmt.Println(query)
 	if err != nil {
-		fmt.Println("1")
 		context.JSON(http.StatusOK, utils.JSONObject{
 			Code:    "0",
 			Message: utils.StatusText(utils.ParamParseError),
 			Content: err.Error(),
 		})
 	}
-	fmt.Println("2")
 	resourceIns := resources.ResourceServiceInstance(resources.RepoInterface(db.SQL))
 	documentService := ServiceInstance(Interface(db.SQL))
 	if query.ResourceName != "" {
