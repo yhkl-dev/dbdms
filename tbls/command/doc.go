@@ -6,6 +6,7 @@ import (
 	"dbdms/tbls/output/gviz"
 	"dbdms/tbls/output/md"
 	"dbdms/tbls/datasource"
+	"fmt"
 	"github.com/pkg/errors"
 	"log"
 	"os"
@@ -14,16 +15,6 @@ import (
 
 func Doc(args []string) {
 	c, err := config.New()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	options, err := loadDocArgs(args)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = c.Load(configPath, options...)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,11 +29,10 @@ func Doc(args []string) {
 		log.Fatal(err)
 	}
 
-	err = md.Output(s, c, force)
+	err = md.Output(s, c, false)
 
 	if err != nil {
-		printError(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
 
@@ -52,10 +42,6 @@ func withDot(s *schema.Schema, c *config.Config, force bool) (e error) {
 	fullPath, err := filepath.Abs(outputPath)
 	if err != nil {
 		return errors.WithStack(err)
-	}
-
-	if !force && outputErExists(s, fullPath) {
-		return errors.New("output ER diagram files already exists")
 	}
 
 	err = os.MkdirAll(fullPath, 0755) // #nosec
@@ -98,16 +84,6 @@ func loadDocArgs(args []string) ([]config.Option, error) {
 	options := []config.Option{}
 	if len(args) > 2 {
 		return options, errors.WithStack(errors.New("too many arguments"))
-	}
-	if adjust {
-		options = append(options, config.Adjust(adjust))
-	}
-	if sort {
-		options = append(options, config.Sort(sort))
-	}
-	options = append(options, config.ERFormat(erFormat))
-	if withoutER {
-		options = append(options, config.ERSkip(withoutER))
 	}
 	if len(args) == 2 {
 		options = append(options, config.DSNURL(args[0]))
