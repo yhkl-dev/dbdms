@@ -18,8 +18,21 @@ func ListAllResources(context *gin.Context) {
 			Content: err.Error(),
 		})
 	}
+	resourceTypeService := ResourceTypeServiceInstance(TypeRepoInterface(db.SQL))
+	resourceTypeIns := resourceTypeService.GetResourceTypeByName(query.ResourceTypeName)
+	if resourceTypeIns == nil {
+		context.JSON(http.StatusOK, utils.JSONObject{
+			Code:    "0",
+			Message: utils.StatusText(utils.ParamParseError),
+			Content: "",
+		})
+		return
+	}
+	resourceTypeID := resourceTypeIns.ResourceTypeID
 	resourceService := ResourceServiceInstance(RepoInterface(db.SQL))
-	pageBean := resourceService.GetResourcePage(query.Page, query.PageSize, &Resource{ResourceName: query.ResourceName, ResourceHostIP: query.ResourceHostIP})
+	pageBean := resourceService.GetResourcePage(query.Page,
+		query.PageSize,
+		&Resource{ResourceName: query.ResourceName, ResourceHostIP: query.ResourceHostIP, ResourceTypeID: resourceTypeID})
 	context.JSON(http.StatusOK, utils.JSONObject{
 		Code:    "1",
 		Content: pageBean,

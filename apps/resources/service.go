@@ -23,6 +23,7 @@ type ResourceTypeService interface {
 	GetResourceTypePage(page int, pageSize int, resourceType *ResourceType) *utils.PageBean
 	DeleteResourceTypeByID(id int) error
 	SaveOrUpdateResourceType(resource *ResourceType) error
+	GetResourceTypeByName(resourceTypeName string) *ResourceType
 }
 
 type resourceService struct {
@@ -138,6 +139,9 @@ func (us *resourceService) GetResourcePage(page int, pageSize int, resource *Res
 	if resource != nil && resource.ResourceHostIP != "" {
 		addCons["resource_host_ip LIKE ?"] = resource.ResourceHostIP + "%"
 	}
+	if resource != nil && resource.ResourceTypeID != 0 {
+		addCons["resource_type_id = ?"] = resource.ResourceTypeID
+	}
 	pageBean := us.repo.FindPage(page, pageSize, addCons, nil)
 	return pageBean
 }
@@ -152,6 +156,17 @@ func (us *resourceTypeService) GetResourceTypeByID(id int) *ResourceType {
 		return nil
 	}
 	resourceType := us.repo.FindOne(id)
+	if resourceType != nil {
+		return resourceType.(*ResourceType)
+	}
+	return nil
+}
+
+func (us *resourceTypeService) GetResourceTypeByName(resourceTypeName string) *ResourceType {
+	if resourceTypeName == "" {
+		return nil
+	}
+	resourceType := us.repo.FindByName(resourceTypeName)
 	if resourceType != nil {
 		return resourceType.(*ResourceType)
 	}

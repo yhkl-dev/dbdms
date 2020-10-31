@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 )
 
 // RBAC middleware
@@ -15,7 +16,8 @@ func RBAC() gin.HandlerFunc {
 		fmt.Println("RBAC midware")
 
 		claims, _ := context.Get("claims")
-		access, err := E.Enforce(claims.(*jwtauth.CustomClaims).UserName, context.Request.RequestURI, context.Request.Method)
+		uri := strings.TrimPrefix(context.Request.URL.Path, "?")
+		access, err := E.Enforce(claims.(*jwtauth.CustomClaims).UserName, uri, context.Request.Method)
 
 		if err != nil || !access {
 			//context.AbortWithStatusJSON(403, gin.H{"message": "forbidden"})

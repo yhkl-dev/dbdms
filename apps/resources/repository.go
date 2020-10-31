@@ -9,6 +9,7 @@ import (
 // Repo resource interface implement  from common interface
 type Repo interface {
 	apps.RepositoryInterface
+	FindByName(name string) interface{}
 }
 
 type resourceRepo struct {
@@ -53,6 +54,15 @@ func (rp *resourceRepo) FindOne(id int) interface{} {
 	return &resource
 }
 
+func (rp *resourceRepo) FindByName(resourceTypeName string) interface{} {
+	var resourceType ResourceType
+	err := rp.db.Where("resource_name = ?", resourceTypeName).First(&resourceType).Error
+	if resourceType.ResourceTypeID == 0 || err != nil {
+		return nil
+	}
+	return &resourceType
+}
+
 func (rp *resourceRepo) FindPage(page int, pageSize int, andCons map[string]interface{}, orCons map[string]interface{}) (pageBean *utils.PageBean) {
 	var total int64
 	var rows []Resource
@@ -83,6 +93,7 @@ func (rp *resourceRepo) FindSingle(condition string, params ...interface{}) inte
 // Repo resource interface implement  from common interface
 type ReTypeRepo interface {
 	apps.RepositoryInterface
+	FindByName(resourceTypeName string) interface{}
 }
 
 type resourceTypeRepo struct {
@@ -127,6 +138,15 @@ func (rp *resourceTypeRepo) FindOne(id int) interface{} {
 	return &resourceType
 }
 
+func (rp *resourceTypeRepo) FindByName(resourceTypeName string) interface{} {
+	var resourceType ResourceType
+	err := rp.db.Where("resource_type_name = ?", resourceTypeName).First(&resourceType).Error
+	if resourceType.ResourceTypeID == 0 || err != nil {
+		return nil
+	}
+	return &resourceType
+}
+
 func (rp *resourceTypeRepo) FindPage(page int, pageSize int, andCons map[string]interface{}, orCons map[string]interface{}) (pageBean *utils.PageBean) {
 	var total int64
 	var rows []ResourceType
@@ -146,7 +166,7 @@ func (rp *resourceTypeRepo) FindPage(page int, pageSize int, andCons map[string]
 }
 
 func (rp *resourceTypeRepo) FindSingle(condition string, params ...interface{}) interface{} {
-	var resourceType  ResourceType
+	var resourceType ResourceType
 	rp.db.Where(condition, params).First(&resourceType)
 	if resourceType.ResourceTypeID != 0 {
 		return &resourceType
