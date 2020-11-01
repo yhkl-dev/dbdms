@@ -22,19 +22,25 @@ func ListAllResourcesDocuments(context *gin.Context) {
 	}
 	resourceIns := resources.ResourceServiceInstance(resources.RepoInterface(db.SQL))
 	documentService := ServiceInstance(Interface(db.SQL))
-	if query.ResourceName != "" {
-		resource := resourceIns.GetResourceByName(query.ResourceName)
+	if query.ResourceID != 0 {
+		resource := resourceIns.GetResourceByID(query.ResourceID)
 		if resource == nil {
 			context.JSON(http.StatusOK, utils.JSONObject{
 				Code:    "0",
 				Message: utils.StatusText(utils.ParamParseError),
-				Content: "",
+				Content: "xxxxx",
 			})
 			return
 		}
-		pageBean := documentService.GetDocumentPage(query.Page,
+		pageBean := documentService.GetDocumentPage(
+			query.Page,
 			query.PageSize,
-			&DatabaseDocument{DocumentDBName: query.DocumentDBName, DocumentTableName: query.DocumentTableName, ResourceID: resource.ResourceID})
+			&DatabaseDocument{
+				DocumentDBName: query.DocumentDBName,
+				DocumentTableName: query.DocumentTableName,
+				DocumentVersion:   query.DocumentVersion,
+				ResourceID:        resource.ResourceID,
+			})
 		context.JSON(http.StatusOK, utils.JSONObject{
 			Code:    "1",
 			Content: pageBean,
@@ -43,7 +49,12 @@ func ListAllResourcesDocuments(context *gin.Context) {
 	}
 	pageBean := documentService.GetDocumentPage(query.Page,
 		query.PageSize,
-		&DatabaseDocument{DocumentDBName: query.DocumentDBName, DocumentTableName: query.DocumentTableName})
+		&DatabaseDocument{
+			DocumentDBName: query.DocumentDBName,
+			DocumentTableName: query.DocumentTableName,
+			DocumentVersion:   query.DocumentVersion,
+			ResourceID:        query.ResourceID,
+		})
 	context.JSON(http.StatusOK, utils.JSONObject{
 		Code:    "1",
 		Content: pageBean,
@@ -58,11 +69,38 @@ func GenerateDocument(context *gin.Context) {
 	DSN := resourceService.GenerateDSN(id)
 	//document := &DatabaseDocument{}
 	documentService := ServiceInstance(Interface(db.SQL))
-	go Doc(DSN, id, documentService)
+	versionService := VersionServiceInstance(VersionRepoInterface(db.SQL))
+	go Doc(DSN, id, documentService, versionService)
 	context.JSON(http.StatusOK, utils.JSONObject{
 		Code:    "1",
 		Message: utils.StatusText(utils.SaveStatusOK),
 		Content: "",
+	})
+	return
+}
+
+func ListDocumentVersions(context *gin.Context) {
+	query := versionQueryParams{}
+	err := context.BindQuery(&query)
+	if err != nil {
+		context.JSON(http.StatusOK, utils.JSONObject{
+			Code:    "0",
+			Message: utils.StatusText(utils.ParamParseError),
+			Content: err.Error(),
+		})
+		return
+	}
+
+	versionService := VersionServiceInstance(VersionRepoInterface(db.SQL))
+	pageBean := versionService.GetVersionPage(
+		query.Page,
+		query.PageSize, &DocumentVersion{
+			ResourceID: query.ResourceID,
+			VersionName: query.Version,
+		})
+	context.JSON(http.StatusOK, utils.JSONObject{
+		Code:    "1",
+		Content: pageBean,
 	})
 	return
 }

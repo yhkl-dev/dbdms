@@ -6,22 +6,42 @@ import (
 	"dbdms/tbls/output/md"
 	"dbdms/tbls/schema"
 	"fmt"
+	"github.com/gofrs/uuid"
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 type documentQueryParams struct {
 	DocumentDBName    string `json:"document_db_name" form:"resource_name"`
-	DocumentTableName string `json:"document_table_name" form:"resource_host_ip"`
-	ResourceName      string `json:"resource_name" form:"resource_name"`
+	DocumentTableName string `json:"document_table_name" form:"document_table_name"`
+	ResourceID        int    `json:"resource_id" form:"resource_id"`
+	DocumentVersion   string `json:"document_version" form:"document_version"`
 	Page              int    `json:"page" form:"page"`
 	PageSize          int    `json:"page_size" form:"page_size"`
 }
 
-func Doc(dsn string, resourceID int, documentService Service) {
+type versionQueryParams struct {
+	Version    string `json:"version" form:"version"`
+	ResourceID int    `json:"resource_id" form:"resource_id"`
+	Page       int    `json:"page" form:"page"`
+	PageSize   int    `json:"page_size" form:"page_size"`
+}
+
+func generateUUID() string {
+	ul, _ := uuid.NewV4()
+	return ul.String()
+}
+
+func getTimeString() (dateString string) {
+	now := time.Now()
+	return fmt.Sprintf("%d%d%d%d%d%d", now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second())
+}
+
+func Doc(dsn string, resourceID int, documentService Service, versionService VersionService) {
 	args := []string{dsn}
 	fmt.Println("start")
 	c, err := config.New()
@@ -51,7 +71,7 @@ func Doc(dsn string, resourceID int, documentService Service) {
 		log.Fatal(err)
 	}
 
-	err = Output(s, c, resourceID, documentService)
+	err = Output(s, c, resourceID, documentService, versionService)
 
 	if err != nil {
 		log.Fatal(err)
@@ -75,9 +95,12 @@ func loadDocArgs(args []string) ([]config.Option, error) {
 }
 
 // Output generate markdown files.
-func Output(s *schema.Schema, c *config.Config, resourceID int, documentService Service) (e error) {
+func Output(s *schema.Schema, c *config.Config, resourceID int, documentService Service, versionService VersionService) (e error) {
 	document := &DatabaseDocument{}
+	version := &DocumentVersion{}
+	versionName := getTimeString()
 	docPath := c.DocPath
+	//documentVersion := generateUUID()
 
 	fullPath, err := filepath.Abs(docPath)
 	if err != nil {
@@ -108,9 +131,16 @@ func Output(s *schema.Schema, c *config.Config, resourceID int, documentService 
 	document.DocumentContent = string(bytes)
 	document.ResourceID = resourceID
 	document.DocumentDBName = s.Name
+	document.DocumentVersion = versionName
 	document.DocumentTableName = "README"
 	document.DocumentFileName = "README.md"
 	err = documentService.SaveDocument(document)
+	if err != nil {
+		fmt.Println(err)
+	}
+	version.ResourceID = resourceID
+	version.VersionName = versionName
+	err = versionService.SaveVersion(version)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -149,6 +179,7 @@ func Output(s *schema.Schema, c *config.Config, resourceID int, documentService 
 		documentTable.ResourceID = resourceID
 		documentTable.DocumentDBName = s.Name
 		documentTable.DocumentTableName = t.Name
+		documentTable.DocumentVersion = versionName
 		documentTable.DocumentFileName = fmt.Sprintf("%s.md", t.Name)
 		err = documentService.SaveDocument(documentTable)
 		if err != nil {

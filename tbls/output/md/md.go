@@ -62,7 +62,6 @@ func (m *Md) OutputTable(wr io.Writer, t *schema.Table) error {
 	templateData := m.makeTableTemplateData(t, m.config.Format.Adjust)
 	templateData["er"] = m.er
 	templateData["erFormat"] = m.config.ER.Format
-	fmt.Println(">>>>>>>>>>>>", m.config.ER.Format)
 
 	err = tmpl.Execute(wr, templateData)
 	if err != nil {

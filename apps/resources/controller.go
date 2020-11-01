@@ -39,6 +39,25 @@ func ListAllResources(context *gin.Context) {
 		})
 		return
 	}
+	if query.ResourceParentTypeName != "" {
+		resourceTypeIns := resourceTypeService.GetResourceTypeByName(query.ResourceParentTypeName)
+		if resourceTypeIns == nil {
+			context.JSON(http.StatusOK, utils.JSONObject{
+				Code:    "0",
+				Message: utils.StatusText(utils.ParamParseError),
+				Content: "",
+			})
+			return
+		}
+		pageBean := resourceService.GetResourcePage(query.Page,
+			query.PageSize,
+			&Resource{ResourceName: query.ResourceName, ResourceHostIP: query.ResourceHostIP, ResourceTypeID: resourceTypeIns.ResourceParentTypeID})
+		context.JSON(http.StatusOK, utils.JSONObject{
+			Code:    "1",
+			Content: pageBean,
+		})
+		return
+	}
 	pageBean := resourceService.GetResourcePage(query.Page,
 		query.PageSize,
 		&Resource{ResourceName: query.ResourceName, ResourceHostIP: query.ResourceHostIP})

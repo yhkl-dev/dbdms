@@ -19,4 +19,5 @@ func RegisterRouter(router *gin.RouterGroup) {
 	resources.RegisterRouter(v1.Group("/resources"))
 	resources.RegisterResourceTypeRouter(v1.Group("/resource_types"))
 	document.RegisterRouter(v1.Group("/documents"))
+	document.RegisterVersionRouter(v1.Group("/document_versions"))
 }
