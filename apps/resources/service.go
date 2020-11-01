@@ -156,7 +156,7 @@ func(us *resourceService) GenerateDSN(id int) string {
 	fmt.Println("ResourceTypeName", r.ResourceType.ResourceTypeName)
 	if r.ResourceType.ResourceTypeName == "postgres" {
 		// postgres://dbuser:dbpass@hostname:5432/dbname
-		return fmt.Sprintf("postgres://%s:%s@%s:%d/%s", r.ResourceUser, tpass, r.ResourceHostIP, r.ResourcePort, r.ResourceDatabaseName)
+		return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", r.ResourceUser, tpass, r.ResourceHostIP, r.ResourcePort, r.ResourceDatabaseName)
 	}
 	return ""
 }

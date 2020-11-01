@@ -36,10 +36,10 @@ func New(c *config.Config, er bool) *Md {
 }
 
 // OutputSchema output .md format for all tables.
-func (m *Md) OutputSchema(wr io.Writer, s *schema.Schema) error {
+func (m *Md) OutputSchema(wr io.Writer, s *schema.Schema) (data map[string]interface{}, err error) {
 	ts, err := m.box.FindString("index.md.tmpl")
 	if err != nil {
-		return errors.WithStack(err)
+		return data, errors.WithStack(err)
 	}
 	tmpl := template.Must(template.New("index").Funcs(output.Funcs(&m.config.MergedDict)).Parse(ts))
 	templateData := m.makeSchemaTemplateData(s, m.config.Format.Adjust)
@@ -47,9 +47,9 @@ func (m *Md) OutputSchema(wr io.Writer, s *schema.Schema) error {
 	templateData["erFormat"] = m.config.ER.Format
 	err = tmpl.Execute(wr, templateData)
 	if err != nil {
-		return errors.WithStack(err)
+		return data, errors.WithStack(err)
 	}
-	return nil
+	return templateData, nil
 }
 
 // OutputTable output md format for table.
@@ -62,6 +62,7 @@ func (m *Md) OutputTable(wr io.Writer, t *schema.Table) error {
 	templateData := m.makeTableTemplateData(t, m.config.Format.Adjust)
 	templateData["er"] = m.er
 	templateData["erFormat"] = m.config.ER.Format
+	fmt.Println(">>>>>>>>>>>>", m.config.ER.Format)
 
 	err = tmpl.Execute(wr, templateData)
 	if err != nil {
@@ -107,7 +108,7 @@ func Output(s *schema.Schema, c *config.Config, force bool) (e error) {
 
 	md := New(c, er)
 
-	err = md.OutputSchema(file, s)
+	_, err = md.OutputSchema(file, s)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -165,7 +166,7 @@ func Diff(s *schema.Schema, c *config.Config) (string, error) {
 
 	md := New(c, er)
 
-	err = md.OutputSchema(b, s)
+	_, err = md.OutputSchema(b, s)
 	if err != nil {
 		return "", errors.WithStack(err)
 	}

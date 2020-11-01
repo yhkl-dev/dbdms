@@ -2,6 +2,7 @@ package document
 
 import (
 	"dbdms/utils"
+	"errors"
 )
 
 // Service document service instance
@@ -10,7 +11,7 @@ type Service interface {
 	//GetResourceByID(id int) *Resource
 	//DeleteResourceByID(id int) error
 	GetDocumentPage(page int, pageSize int, document *DatabaseDocument) *utils.PageBean
-	//SaveOrUpdateResource(resource *Resource) error
+	SaveDocument(document *DatabaseDocument) error
 }
 
 type documentService struct {
@@ -45,4 +46,11 @@ func (ds *documentService) GetDocumentPage(page int, pageSize int, document *Dat
 
 	pageBean := ds.repo.FindPage(page, pageSize, addCons, nil)
 	return pageBean
+}
+
+func (ds *documentService) SaveDocument(document *DatabaseDocument) error {
+	if document == nil {
+		return errors.New(utils.StatusText(utils.SaveObjIsNil))
+	}
+	return ds.repo.Insert(document)
 }

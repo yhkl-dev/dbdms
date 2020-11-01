@@ -29,13 +29,14 @@ func loadDocArgs(args []string) ([]config.Option, error) {
 }
 
 func Doc(dsn string) {
-	fmt.Println("11111")
+	args := []string{dsn}
+	fmt.Println("start")
 	c, err := config.New()
 	if err != nil {
 		log.Fatal(err)
 	}
-	configPath := "./docs"
-	args := []string{dsn}
+	configPath := "./docs/.tbls.yml"
+
 	options, err := loadDocArgs(args)
 	if err != nil {
 		log.Fatal(err)
@@ -62,8 +63,13 @@ func Doc(dsn string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("end")
 }
 
+func YHKL() {
+	fmt.Println("test")
+}
+// not use
 func withDot(s *schema.Schema, c *config.Config) (e error) {
 	erFormat := c.ER.Format
 	outputPath := c.DocPath

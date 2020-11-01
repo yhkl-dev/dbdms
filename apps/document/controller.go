@@ -3,9 +3,7 @@ package document
 import (
 	"dbdms/apps/resources"
 	"dbdms/db"
-	"dbdms/tbls/command"
 	"dbdms/utils"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -58,10 +56,13 @@ func GenerateDocument(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
 	resourceService := resources.ResourceServiceInstance(resources.RepoInterface(db.SQL))
 	DSN := resourceService.GenerateDSN(id)
-	fmt.Println("DSN",  DSN)
-	command.Doc(DSN)
-	fmt.Println("DSNE")
-
-
+	//document := &DatabaseDocument{}
+	documentService := ServiceInstance(Interface(db.SQL))
+	go Doc(DSN, id, documentService)
+	context.JSON(http.StatusOK, utils.JSONObject{
+		Code:    "1",
+		Message: utils.StatusText(utils.SaveStatusOK),
+		Content: "",
+	})
 	return
 }
