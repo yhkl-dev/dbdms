@@ -6,7 +6,6 @@ import (
 	"dbdms/tbls/output/md"
 	"dbdms/tbls/schema"
 	"fmt"
-	"github.com/gofrs/uuid"
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"log"
@@ -31,17 +30,17 @@ type versionQueryParams struct {
 	PageSize   int    `json:"page_size" form:"page_size"`
 }
 
-func generateUUID() string {
-	ul, _ := uuid.NewV4()
-	return ul.String()
-}
+//func generateUUID() string {
+//	ul, _ := uuid.NewV4()
+//	return ul.String()
+//}
 
 func getTimeString() (dateString string) {
 	now := time.Now()
 	return fmt.Sprintf("%d%d%d%d%d%d", now.Year(), now.Month(), now.Day(), now.Hour(), now.Minute(), now.Second())
 }
 
-func Doc(dsn string, resourceID int, documentService Service, versionService VersionService) {
+func Doc(dsn string, resourceID int, documentService Service, versionService VersionService, versionName string) {
 	args := []string{dsn}
 	fmt.Println("start")
 	c, err := config.New()
@@ -71,7 +70,7 @@ func Doc(dsn string, resourceID int, documentService Service, versionService Ver
 		log.Fatal(err)
 	}
 
-	err = Output(s, c, resourceID, documentService, versionService)
+	err = Output(s, c, resourceID, documentService, versionService, versionName)
 
 	if err != nil {
 		log.Fatal(err)
@@ -95,10 +94,11 @@ func loadDocArgs(args []string) ([]config.Option, error) {
 }
 
 // Output generate markdown files.
-func Output(s *schema.Schema, c *config.Config, resourceID int, documentService Service, versionService VersionService) (e error) {
+func Output(s *schema.Schema, c *config.Config, resourceID int, documentService Service, versionService VersionService, versionName string ) (e error) {
 	document := &DatabaseDocument{}
 	version := &DocumentVersion{}
-	versionName := getTimeString()
+
+	fmt.Println("versionName----------------------------------------", versionName)
 	docPath := c.DocPath
 	//documentVersion := generateUUID()
 

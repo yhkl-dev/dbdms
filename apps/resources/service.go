@@ -152,7 +152,6 @@ func(us *resourceService) GenerateDSN(id int) string {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Printf("解密后:%s\n", tpass)
 	fmt.Println("ResourceTypeName", r.ResourceType.ResourceTypeName)
 	if r.ResourceType.ResourceTypeName == "postgres" {
 		// postgres://dbuser:dbpass@hostname:5432/dbname

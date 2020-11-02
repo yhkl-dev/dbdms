@@ -70,7 +70,8 @@ func GenerateDocument(context *gin.Context) {
 	//document := &DatabaseDocument{}
 	documentService := ServiceInstance(Interface(db.SQL))
 	versionService := VersionServiceInstance(VersionRepoInterface(db.SQL))
-	go Doc(DSN, id, documentService, versionService)
+	versionName := getTimeString()
+	go Doc(DSN, id, documentService, versionService, versionName)
 	context.JSON(http.StatusOK, utils.JSONObject{
 		Code:    "1",
 		Message: utils.StatusText(utils.SaveStatusOK),
