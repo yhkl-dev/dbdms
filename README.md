@@ -1,19 +1,18 @@
-# dbdms
+# Database Document System
+
+![Go](https://github.com/yhkl-dev/dbdms/workflows/Go/badge.svg)
+
     database document management system
 
-### todo
-+ rbac role based access control 
+### feature
+
++ rbac 
 + jwt
-+ database document
-+ cmdb
++ database document manage
 
-
-### run 
-```shell
-   $ gowatch / go run main.go
-```
 
 ### todo
-   exec scripts
-   dingding robot config
+
++ exec scripts
++ dingding robot config
    
