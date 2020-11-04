@@ -45,7 +45,7 @@ func (user *User) validator() error {
 }
 
 func init() {
-	db.SQL.AutoMigrate(&User{})
+	_ = db.SQL.AutoMigrate(&User{})
 
 	err := utils.LoadTokenConfig("./config/token-config.yml")
 	if err != nil {
