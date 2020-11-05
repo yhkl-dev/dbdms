@@ -64,7 +64,7 @@ func Doc(dsn string, resourceID int, documentService Service, versionService Ver
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	fmt.Println("TETESTTSTS")
 	err = c.ModifySchema(s)
 	if err != nil {
 		log.Fatal(err)
@@ -114,6 +114,7 @@ func Output(s *schema.Schema, c *config.Config, resourceID int, documentService 
 		}
 	}()
 	if err != nil {
+		fmt.Println(err)
 		return errors.WithStack(err)
 	}
 	// README.md
@@ -147,7 +148,6 @@ func Output(s *schema.Schema, c *config.Config, resourceID int, documentService 
 
 	fmt.Println("README.md")
 	//fmt.Printf("%s\n", filepath.Join(docPath, "README.md"))
-
 	// tables
 	for _, t := range s.Tables {
 		file, err := os.Create(filepath.Join(fullPath, fmt.Sprintf("%s.md", t.Name)))
