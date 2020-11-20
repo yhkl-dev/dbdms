@@ -55,13 +55,22 @@ jobs:
         REMOTE_PASS: ${{ secrets.REMOTE_PASS }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
 
-  sonarQubeTrigger:
-    name: SonarQube Trigger
+#   sonarQubeTrigger:
+#     name: SonarQube Trigger
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@master
+#       - name: SonarQube Scan
+#         uses: kitabisa/sonarqube-action@master
+#         with:
+#           host: ${{ secrets.SONARQUBE_HOST }}
+#           login: ${{ secrets.SONARQUBE_TOKEN }}
+          
+  run-sonarqube:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: SonarQube Scan
-        uses: kitabisa/sonarqube-action@master
-        with:
-          host: ${{ secrets.SONARQUBE_HOST }}
-          login: ${{ secrets.SONARQUBE_TOKEN }}
+    - name: SonarQube Scan
+      uses: monstar-lab-oss/sonarqube-github-action@v1.0.1
+      with:
+        url: ${{ secrets.SONARQUBE_HOST }}
+        token: ${{ secrets.SONARQUBE_TOKEN }}
