@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: SonarQube Scan
-      uses: yhkl-dev/github-action-for-sonarqube@master
+      uses: yhkl-dev/github-action-for-sonarqube@1.0.0
       with:
         url: ${{ secrets.SONARQUBE_HOST }}
         token: ${{ secrets.SONARQUBE_TOKEN }}
