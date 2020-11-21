@@ -69,8 +69,9 @@ jobs:
   run-sonarqube:
     runs-on: ubuntu-latest
     steps:
-    - name: SonarQube Scan
-      uses: yhkl-dev/github-action-for-sonarqube@1.0.1
-      with:
-        url: ${{ secrets.SONARQUBE_HOST }}
-        token: ${{ secrets.SONARQUBE_TOKEN }}
+      - uses: actions/checkout@master
+      - name: SonarQube Scan
+        uses: yhkl-dev/github-action-for-sonarqube@master
+        with:
+          host: ${{ secrets.SONARQUBE_HOST }}
+          login: ${{ secrets.SONARQUBE_TOKEN }}
