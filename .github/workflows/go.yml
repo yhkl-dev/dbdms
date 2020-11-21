@@ -70,21 +70,21 @@ jobs:
   run-sonarqube:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup sonarqube
-        uses: warchant/setup-sonar-scanner@v3
-      - name: Run sonarqube
-        env:
-          # to get access to secrets.SONAR_TOKEN, provide GITHUB_TOKEN
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: sonar-scanner
-             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-             -Dsonar.organization=1corp
-             -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
-             -Dsonar.projectKey=sonar-scanner-action
+#       - name: Setup sonarqube
+#         uses: warchant/setup-sonar-scanner@v3
+#       - name: Run sonarqube
+#         env:
+#           # to get access to secrets.SONAR_TOKEN, provide GITHUB_TOKEN
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         run: sonar-scanner
+#              -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+#              -Dsonar.organization=1corp
+#              -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }}
+#              -Dsonar.projectKey=sonar-scanner-action
             
-#       - uses: actions/checkout@master
-#       - name: SonarQube Scan
-#         uses: yhkl-dev/github-action-for-sonarqube@master
-#         with:
-#           host: ${{ secrets.SONARQUBE_HOST }}
-#           login: ${{ secrets.SONARQUBE_TOKEN }}
+      - uses: actions/checkout@master
+      - name: SonarQube Scan
+        uses: yhkl-dev/github-action-for-sonarqube@master
+        with:
+          host: ${{ secrets.SONARQUBE_HOST }}
+          login: ${{ secrets.SONARQUBE_TOKEN }}
