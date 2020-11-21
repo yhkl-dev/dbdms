@@ -59,9 +59,9 @@ jobs:
       run: |
         sudo apt-get install -y wget && \
         wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216-linux.zip && \
-        unzip sonar-scanner-cli-4.5.0.2216-linux.zip && \
-        rm sonar-scanner-cli-4.5.0.2216-linux.zip && \
-        mv sonar-scanner-4.5.0.2216-linux /usr/lib/sonar-scanner && ln -s /usr/lib/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner && sonar-scanner -Dsonar.projectKey=test -Dsonar.sources=. -Dsonar.host.url=http://81.70.90.102:9000 -Dsonar.login=21dab398130c140bf4e903bed76dc9b251af54fe
+        sudo unzip sonar-scanner-cli-4.5.0.2216-linux.zip && \
+        sudo rm sonar-scanner-cli-4.5.0.2216-linux.zip && \
+        sudo mv sonar-scanner-4.5.0.2216-linux /usr/lib/sonar-scanner && ln -s /usr/lib/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner && sudo sonar-scanner -Dsonar.projectKey=test -Dsonar.sources=. -Dsonar.host.url=http://81.70.90.102:9000 -Dsonar.login=21dab398130c140bf4e903bed76dc9b251af54fe
 
 #   sonarQubeTrigger:
 #     name: SonarQube Trigger
