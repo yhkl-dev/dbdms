@@ -71,7 +71,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: SonarQube Scan
-        uses: yhkl-dev/github-action-for-sonarqube@master
+        uses: yhkl-dev/github-action-for-sonarqube@1.0.2
         with:
           host: ${{ secrets.SONARQUBE_HOST }}
           login: ${{ secrets.SONARQUBE_TOKEN }}
