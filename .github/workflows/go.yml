@@ -55,13 +55,13 @@ jobs:
         REMOTE_PASS: ${{ secrets.REMOTE_PASS }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
 
-    - name: SonarQube Trigger
-      run: |
-        sudo apt-get install -y wget && \
-        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216-linux.zip && \
-        sudo unzip sonar-scanner-cli-4.5.0.2216-linux.zip && \
-        sudo rm sonar-scanner-cli-4.5.0.2216-linux.zip && \
-        sudo mv sonar-scanner-4.5.0.2216-linux /usr/lib/sonar-scanner && sudo ln -s /usr/lib/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner && sudo sonar-scanner -Dsonar.projectKey=test -Dsonar.sources=. -Dsonar.host.url=http://81.70.90.102:9001  -Dsonar.login=c516658aeb8742b3ce415b94600e60b1644bbf07
+#     - name: SonarQube Trigger
+#       run: |
+#         sudo apt-get install -y wget && \
+#         wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.5.0.2216-linux.zip && \
+#         sudo unzip sonar-scanner-cli-4.5.0.2216-linux.zip && \
+#         sudo rm sonar-scanner-cli-4.5.0.2216-linux.zip && \
+#         sudo mv sonar-scanner-4.5.0.2216-linux /usr/lib/sonar-scanner && sudo ln -s /usr/lib/sonar-scanner/bin/sonar-scanner /usr/local/bin/sonar-scanner && sudo sonar-scanner -Dsonar.projectKey=test -Dsonar.sources=. -Dsonar.host.url=http://81.70.90.102:9001  -Dsonar.login=c516658aeb8742b3ce415b94600e60b1644bbf07
 
   sonarQubeTrigger:
     name: SonarQube Trigger
