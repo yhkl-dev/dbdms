@@ -2,8 +2,8 @@ package rbac
 
 import (
 	"dbdms/db"
-	"log"
 	"fmt"
+	"log"
 
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
@@ -30,6 +30,7 @@ func init() {
 	ReInit()
 }
 
+// ReInit re init function
 func ReInit() {
 	fmt.Println("reinit rbac")
 	userRoles := getUserRoles()

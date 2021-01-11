@@ -18,6 +18,8 @@ require (
 	github.com/goccy/go-graphviz v0.0.8
 	github.com/goccy/go-yaml v1.8.3
 	github.com/golang/protobuf v1.4.2 // indirect
+	github.com/graphql-go/graphql v0.7.9
+	github.com/graphql-go/handler v0.2.3
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/k1LoW/ffff v0.1.1
 	github.com/karrick/godirwalk v1.16.1 // indirect
@@ -29,6 +31,7 @@ require (
 	github.com/minio/minio v0.0.0-20201031083448-b686bb9c8364
 	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.0
+	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.7.0 // indirect
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.7
