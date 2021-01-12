@@ -6,22 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/graphql-go/handler"
 )
-
-// GraphqlHandler user graph sql handler
-func GraphqlHandler() gin.HandlerFunc {
-	h := handler.New(&handler.Config{
-		Schema:   &Schema,
-		Pretty:   true,
-		GraphiQL: true,
-	})
-
-	// 只需要通过Gin简单封装即可
-	return func(c *gin.Context) {
-		h.ServeHTTP(c.Writer, c.Request)
-	}
-}
 
 // ListAllUsers 获取用户列表
 // @Summary 获取用户列表
