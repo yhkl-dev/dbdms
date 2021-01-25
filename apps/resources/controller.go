@@ -3,11 +3,13 @@ package resources
 import (
 	"dbdms/db"
 	"dbdms/utils"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
+// ListAllResources list all resources
 func ListAllResources(context *gin.Context) {
 	query := resourceQueryParams{}
 	err := context.BindQuery(&query)
@@ -68,6 +70,7 @@ func ListAllResources(context *gin.Context) {
 	return
 }
 
+// CreateResource create resource
 func CreateResource(context *gin.Context) {
 	resource := &Resource{}
 	err := context.Bind(resource)
@@ -104,6 +107,7 @@ func CreateResource(context *gin.Context) {
 	})
 }
 
+// UpdateResource update resource
 func UpdateResource(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
 	resource := &Resource{}
@@ -151,6 +155,7 @@ func UpdateResource(context *gin.Context) {
 	})
 }
 
+// DeleteResourceByID delete resource by id
 func DeleteResourceByID(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
 	resourceService := ResourceServiceInstance(RepoInterface(db.SQL))
@@ -169,6 +174,7 @@ func DeleteResourceByID(context *gin.Context) {
 	})
 }
 
+// ListAllResourceTypes list all resource types
 func ListAllResourceTypes(context *gin.Context) {
 	query := resourceTypeQueryParams{}
 	err := context.BindQuery(&query)
@@ -188,7 +194,7 @@ func ListAllResourceTypes(context *gin.Context) {
 	return
 }
 
-// CreateResourceType
+// CreateResourceType create resoruce type
 func CreateResourceType(context *gin.Context) {
 	resourceType := &ResourceType{}
 	err := context.Bind(resourceType)
@@ -215,7 +221,7 @@ func CreateResourceType(context *gin.Context) {
 	})
 }
 
-// UpdateResourceType
+// UpdateResourceType udpate resource type
 func UpdateResourceType(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
 	resourceType := &ResourceType{}
@@ -239,6 +245,7 @@ func UpdateResourceType(context *gin.Context) {
 	})
 }
 
+// DeleteResourceTypeByID delete resource type by id
 func DeleteResourceTypeByID(context *gin.Context) {
 	id, _ := strconv.Atoi(context.Param("id"))
 	resourceTypeService := ResourceTypeServiceInstance(TypeRepoInterface(db.SQL))
@@ -262,5 +269,28 @@ func DeleteResourceTypeByID(context *gin.Context) {
 	context.JSON(http.StatusOK, utils.JSONObject{
 		Code:    "1",
 		Message: utils.StatusText(utils.DeleteStatusOK),
+	})
+}
+
+// TestDBConnection test database connection function
+func TestDBConnection(context *gin.Context) {
+	resource := &Resource{}
+	err := context.Bind(resource)
+	if err != nil {
+		context.JSON(http.StatusUnprocessableEntity, &utils.JSONObject{
+			Code:    "0",
+			Message: utils.StatusText(utils.BindModelError),
+			Content: err.Error(),
+		})
+		return
+	}
+
+	resourceService := ResourceServiceInstance(RepoInterface(db.SQL))
+	resourceTypeService := ResourceTypeServiceInstance(TypeRepoInterface(db.SQL))
+	resourceType := resourceTypeService.GetResourceTypeByID(resource.ResourceType.ResourceTypeID)
+	res := resourceService.TestConnection(resource, resourceType.ResourceTypeName)
+	context.JSON(http.StatusOK, utils.JSONObject{
+		Code:    "0",
+		Message: strconv.FormatBool(res),
 	})
 }

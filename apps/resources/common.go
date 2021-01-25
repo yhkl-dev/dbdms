@@ -14,3 +14,12 @@ type resourceTypeQueryParams struct {
 	Page             int    `json:"page" form:"page"`
 	PageSize         int    `json:"page_size" form:"page_size"`
 }
+
+type testConnection struct {
+	IP           string `json:"ip" form:"ip"`
+	Username     string `json:"username" form:"username"`
+	Password     string `json:"password" form:"passswor"`
+	Port         int    `json:"port" form:"port"`
+	Schema       string `json:"schema" form:"schema"`
+	ResourceType int    `json:"resource_type" form:"resource_type"`
+}

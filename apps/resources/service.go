@@ -1,13 +1,14 @@
 package resources
 
 import (
+	"database/sql"
 	"dbdms/utils"
 	"encoding/base64"
 	"errors"
 	"fmt"
 )
 
-// Service resource service instance
+// ResourceService Service resource service instance
 type ResourceService interface {
 	GetResources() []*Resource
 	GetResourceByID(id int) *Resource
@@ -16,6 +17,7 @@ type ResourceService interface {
 	GetResourcePage(page int, pageSize int, resource *Resource) *utils.PageBean
 	SaveOrUpdateResource(resource *Resource) error
 	GenerateDSN(id int) string
+	TestConnection(resource *Resource, typeName string) bool
 }
 
 // ResourceTypeService resource type service instance
@@ -49,6 +51,27 @@ func ResourceServiceInstance(repo Repo) ResourceService {
 func ResourceTypeServiceInstance(repo Repo) ResourceTypeService {
 	resourceTypeServiceIns.repo = repo
 	return resourceTypeServiceIns
+}
+
+func (us *resourceService) TestConnection(resource *Resource, typeName string) bool {
+	if typeName == "postgres" {
+		dbConnInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+			resource.ResourceHostIP, resource.ResourcePort, resource.ResourceUser, resource.ResourcePassword, resource.ResourceDatabaseName)
+		db, err := sql.Open("postgres", dbConnInfo)
+		if err != nil {
+			fmt.Println("Wrong args.Connected failed.")
+			fmt.Println(err)
+			return false
+		}
+		err = db.Ping()
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("Connected failed.")
+			return false
+		}
+		return true
+	}
+	return false
 }
 
 func (us *resourceService) GetResources() []*Resource {
@@ -85,7 +108,7 @@ func (us *resourceService) SaveOrUpdateResource(resource *Resource) error {
 	if resource.ResourceID == 0 {
 		salt := utils.GetRandomString(16)
 		resource.ResourcePassSalt = string(salt[:])
-		encryptBytes, err :=  utils.AesEncrypt([]byte(resource.ResourcePassword), salt)
+		encryptBytes, err := utils.AesEncrypt([]byte(resource.ResourcePassword), salt)
 
 		if err != nil {
 			return err
@@ -110,7 +133,7 @@ func (us *resourceService) SaveOrUpdateResource(resource *Resource) error {
 		return errors.New(utils.StatusText(utils.UpdateObjIsNil))
 	}
 	if persist.ResourcePassword != resource.ResourcePassword {
-		encryptBytes, err :=  utils.AesEncrypt([]byte(resource.ResourcePassword), []byte(resource.ResourcePassSalt))
+		encryptBytes, err := utils.AesEncrypt([]byte(resource.ResourcePassword), []byte(resource.ResourcePassSalt))
 		if err != nil {
 			return err
 		}
@@ -138,7 +161,7 @@ func (us *resourceService) DeleteResourceByID(id int) error {
 	return us.repo.Delete(resource)
 }
 
-func(us *resourceService) GenerateDSN(id int) string {
+func (us *resourceService) GenerateDSN(id int) string {
 	r := us.GetResourceByID(id)
 	if r == nil {
 		return ""

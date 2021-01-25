@@ -2,9 +2,10 @@ package db
 
 import (
 	"dbdms/utils"
+	"log"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"log"
 )
 
 // SQL database Operator
