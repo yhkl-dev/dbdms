@@ -17,7 +17,7 @@ type ResourceService interface {
 	GetResourcePage(page int, pageSize int, resource *Resource) *utils.PageBean
 	SaveOrUpdateResource(resource *Resource) error
 	GenerateDSN(id int) string
-	TestConnection(resource *Resource, typeName string) bool
+	TestConnection(resource *Resource, typeName string) (bool, error)
 }
 
 // ResourceTypeService resource type service instance
@@ -53,25 +53,21 @@ func ResourceTypeServiceInstance(repo Repo) ResourceTypeService {
 	return resourceTypeServiceIns
 }
 
-func (us *resourceService) TestConnection(resource *Resource, typeName string) bool {
+func (us *resourceService) TestConnection(resource *Resource, typeName string) (bool, error) {
 	if typeName == "postgres" {
 		dbConnInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 			resource.ResourceHostIP, resource.ResourcePort, resource.ResourceUser, resource.ResourcePassword, resource.ResourceDatabaseName)
 		db, err := sql.Open("postgres", dbConnInfo)
 		if err != nil {
-			fmt.Println("Wrong args.Connected failed.")
-			fmt.Println(err)
-			return false
+			return false, err
 		}
 		err = db.Ping()
 		if err != nil {
-			fmt.Println(err)
-			fmt.Println("Connected failed.")
-			return false
+			return false, err
 		}
-		return true
+		return true, nil
 	}
-	return false
+	return false, nil
 }
 
 func (us *resourceService) GetResources() []*Resource {

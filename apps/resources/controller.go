@@ -288,9 +288,10 @@ func TestDBConnection(context *gin.Context) {
 	resourceService := ResourceServiceInstance(RepoInterface(db.SQL))
 	resourceTypeService := ResourceTypeServiceInstance(TypeRepoInterface(db.SQL))
 	resourceType := resourceTypeService.GetResourceTypeByID(resource.ResourceType.ResourceTypeID)
-	res := resourceService.TestConnection(resource, resourceType.ResourceTypeName)
+	res, err := resourceService.TestConnection(resource, resourceType.ResourceTypeName)
 	context.JSON(http.StatusOK, utils.JSONObject{
 		Code:    "0",
 		Message: strconv.FormatBool(res),
+		Content: err.Error(),
 	})
 }
