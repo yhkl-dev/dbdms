@@ -80,7 +80,6 @@ func init() {
 
 func main() {
 	defer db.Close()
-	fmt.Println("Running")
 	serve := &http.Server{
 		Addr:         fmt.Sprintf("127.0.0.1:%d", cfg.port),
 		Handler:      app.routes(),

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/graphql-go/graphql"
+	"github.com/mitchellh/mapstructure"
 )
 
 var databaseType = graphql.NewObject(
@@ -44,12 +45,47 @@ var databaseType = graphql.NewObject(
 			"updated_at": &graphql.Field{
 				Type: graphql.DateTime,
 			},
+			"genre": &graphql.Field{
+				Type: genreType,
+			},
+		},
+	},
+)
+
+var databaseInputType = graphql.NewInputObject(
+	graphql.InputObjectConfig{
+		Name: "databaseInputType",
+		Fields: graphql.InputObjectConfigFieldMap{
+			"name": &graphql.InputObjectFieldConfig{
+				Type: graphql.NewNonNull(graphql.String),
+			},
+			"host": &graphql.InputObjectFieldConfig{
+				Type: graphql.NewNonNull(graphql.String),
+			},
+			"port": &graphql.InputObjectFieldConfig{
+				Type: graphql.NewNonNull(graphql.Int),
+			},
+			"username": &graphql.InputObjectFieldConfig{
+				Type: graphql.NewNonNull(graphql.String),
+			},
+			"password": &graphql.InputObjectFieldConfig{
+				Type: graphql.NewNonNull(graphql.String),
+			},
+			"schema": &graphql.InputObjectFieldConfig{
+				Type: graphql.NewNonNull(graphql.String),
+			},
+			"comment": &graphql.InputObjectFieldConfig{
+				Type: graphql.NewNonNull(graphql.String),
+			},
+			"genre_id": &graphql.InputObjectFieldConfig{
+				Type: graphql.Int,
+			},
 		},
 	},
 )
 
 // graphql schema definition
-var graphqlFields = graphql.Fields{
+var databaseFields = graphql.Fields{
 	"getDatabaseByID": &graphql.Field{
 		Type:        databaseType,
 		Description: "Get database by id",
@@ -109,7 +145,7 @@ var graphqlFields = graphql.Fields{
 
 var databaseMutationType = graphql.Fields{
 	"testConnect": &graphql.Field{
-		Type: databaseType,
+		Type:        databaseType,
 		Description: "test database connection",
 		Args: graphql.FieldConfigArgument{
 			"host": &graphql.ArgumentConfig{
@@ -135,45 +171,23 @@ var databaseMutationType = graphql.Fields{
 	"createDatabase": &graphql.Field{
 		Type: databaseType,
 		Args: graphql.FieldConfigArgument{
-			"name": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.String),
-			},
-			"host": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.String),
-			},
-			"port": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.Int),
-			},
-			"username": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.String),
-			},
-			"password": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.String),
-			},
-			"schema": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.String),
-			},
-			"comment": &graphql.ArgumentConfig{
-				Type: graphql.NewNonNull(graphql.String),
+			"databaseInputType": &graphql.ArgumentConfig{
+				Type: graphql.NewNonNull(databaseInputType),
 			},
 		},
 		Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
 			var params models.Database
-			params.Name = p.Args["name"].(string)
-			params.Host = p.Args["host"].(string)
-			params.Port = p.Args["port"].(int)
-			params.Username = p.Args["username"].(string)
-			params.Password = p.Args["password"].(string)
-			params.Schema = p.Args["schema"].(string)
-			params.Comment = p.Args["comment"].(string)
-			params.CreatedAt = time.Now()
-			params.UpdatedAt = time.Now()
-
-			err := app.models.DB.CreateDatabase(params)
+			var x = p.Args["databaseInputType"].(map[string]interface{})
+			err := mapstructure.Decode(x, &params)
 			if err != nil {
 				return nil, err
 			}
-			return nil, nil
+			params.CreatedAt = time.Now()
+			params.UpdatedAt = time.Now()
+			if err = app.models.DB.CreateDatabase(params); err != nil {
+				return nil, err
+			}
+			return params, nil
 		},
 	},
 	"updateDatabase": &graphql.Field{

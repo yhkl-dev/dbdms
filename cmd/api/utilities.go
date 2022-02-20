@@ -3,6 +3,9 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/graphql-go/graphql"
+	"github.com/imdario/mergo"
 )
 
 func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, wrap string) error {
@@ -33,4 +36,13 @@ func (app *application) errorJSON(w http.ResponseWriter, err error, status ...in
 		Message: err.Error(),
 	}
 	app.writeJSON(w, statusCode, theError, "error")
+}
+
+func merge(dest graphql.Fields, src ...graphql.Fields) (result graphql.Fields) {
+	for _, data := range src {
+		if err := mergo.Merge(&dest, data); err != nil {
+			panic(err)
+		}
+	}
+	return dest
 }
