@@ -1,0 +1,60 @@
+type Genre {
+    id: ID!
+    name: String!
+    create_at: Time
+    update_at: Time
+}
+
+type Database {
+    id: ID!
+    name: String!
+    host: String!
+    port: Int!
+    username: String!
+    password: String!
+    schema: String!
+    comment: String!
+    createAt: Time
+    updateAt: Time
+    genre: Genre!
+    user: User!
+}
+
+type DataBaseDocument {
+    id: ID!
+    versionID: String!
+    content: String!
+    database: Database!
+    createAt: Time
+}
+
+input GenreInput {
+    id: ID!
+}
+input UserInput {
+    id: ID!
+}
+
+input NewDatabaseInput {
+    name: String!
+    host: String!
+    port: Int!
+    username: String!
+    password: String!
+    schema: String!
+    comment: String!
+    genre: GenreInput!
+    user: UserInput!
+}
+
+input updateDatabaseInput {
+    id: ID!
+    name: String!
+    host: String!
+    port: Int!
+    username: String!
+    password: String!
+    schema: String!
+    comment: String!
+    genre: GenreInput!
+}

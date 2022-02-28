@@ -1,0 +1,23 @@
+scalar Time
+
+type Query {
+  queryDatabases(input: Page): [Database!]!
+  queryDatabaseByID(input: ID!): Database!
+  queryUser: [User!]! 
+  queryUserByID(intput: ID!): User!
+  queryDatbaseDocument(input: Page) [DataBaseDocument!]!
+  queryDatabaseDocumentByID(input: ID!) DataBaseDocument
+}
+
+
+type Mutation {
+  createDatabase(input: NewDatabaseInput): Database!
+  updateDatabase(input: updateDatabaseInput!): Database!
+  detelDatabase(input: ID!): ID!
+  createUser(input: NewUserInput): User!
+  updateUser(input: UpdataUserInput!): User!
+  deleteUser(input: ID!): ID!
+  testDatabaseConnection(input: testConnectionInput!): Bool!
+  createDatabaseDocument(input: ID!) DataBaseDocument!
+  deleteDatabaseDocumnet(input: ID!) Bool!
+}

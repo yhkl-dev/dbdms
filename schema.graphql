@@ -1,0 +1,69 @@
+scalar DateTime
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  createAt: DateTime
+  updateAt: DateTime
+}
+
+type Genre {
+    id: ID!
+    name: String!
+    create_at: DateTime
+    update_at: DateTime
+}
+
+type Database {
+    id: ID!
+    name: String!
+    host: String!
+    port: Int!
+    username: String!
+    password: String!
+    schema: String!
+    comment: String!
+    createAt: DateTime
+    updateAt: DateTime
+    genre: Genre!
+    user: User!
+}
+
+type DataBaseDocument {
+    id: ID!
+    versionID: String!
+    content: String!
+    database: Database!
+    createAt: DateTime
+}
+
+
+input GenreInput {
+    id: ID!
+}
+
+input NewDatabase {
+    name: String!
+    host: String!
+    port: Int!
+    username: String!
+    password: String!
+    schema: String!
+    comment: String!
+    create_at: DateTime
+    update_at: DateTime
+    genre: GenreInput!
+}
+
+
+type Query {
+  databases: [Database!]!
+  users: [User!]!
+}
+
+
+type Mutation {
+  createDatabase(input: NewDatabase): Database!
+}
