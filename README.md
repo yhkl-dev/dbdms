@@ -15,4 +15,6 @@
 
 + exec scripts
 + dingding robot config
+
+### update readme for sonarqube
    
